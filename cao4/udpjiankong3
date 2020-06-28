@@ -1,0 +1,81 @@
+#!/bin/sh
+source /etc/openvpn/peizhi.cfg
+echo  $(date +%Y年%m月%d日%k时%M分)读取设定值:"$shijian","$shijian","$chu","$chu2","$localhost","$root","$mima","$shujuku","$users","$user","$isent","$irecv","$maxll","$phone""</br>" >/dev/null 2>&1
+if [ -f /etc/openvpn/peizhi.cfg ];
+then
+jiaobenpath=$(cd `dirname $0`; pwd)
+rm -rf ${jiaobenpath}/aa
+rm -rf ${jiaobenpath}/bb
+rm -rf ${jiaobenpath}/cc
+rm -rf ${jiaobenpath}/dd
+rm -rf ${jiaobenpath}/gg
+echo  $(date +%Y年%m月%d日%k时%M分) 开始监控UDP53用户..."</br>"
+bmd5=$(md5sum $jiaobenpath/openvpn-status4.txt)
+while true
+do
+amd5=$(md5sum $jiaobenpath/openvpn-status4.txt)
+#echo bb="$bmd5"
+if [ "$amd5" = "$bmd5" ];
+then
+amd5=$amd5
+else
+awk -F: '$1~/[B][y][t][e][s][ ][R][e][c][e][i][v][e][d][,][B][y][t][e][s][ ][S][e][n][t]/,/[R][O][U][T][I][N][G][ ][T][A][B][L][E]/{print $0}' ''$jiaobenpath''/openvpn-status4.txt | awk -F"," '{print $1 >"'$jiaobenpath'/aa"}'
+awk -F: '$1~/[B][y][t][e][s][ ][R][e][c][e][i][v][e][d][,][B][y][t][e][s][ ][S][e][n][t]/,/[R][O][U][T][I][N][G][ ][T][A][B][L][E]/{print $0}' ''$jiaobenpath''/openvpn-status4.txt | awk -F"," '{print $2 }' | awk -F":" '{print $2 >"'$jiaobenpath'/bb"}'
+awk -F: '$1~/[B][y][t][e][s][ ][R][e][c][e][i][v][e][d][,][B][y][t][e][s][ ][S][e][n][t]/,/[R][O][U][T][I][N][G][ ][T][A][B][L][E]/{print $0}' ''$jiaobenpath''/openvpn-status4.txt | awk -F"," '{print $3 >"'$jiaobenpath'/cc"}'
+awk -F: '$1~/[B][y][t][e][s][ ][R][e][c][e][i][v][e][d][,][B][y][t][e][s][ ][S][e][n][t]/,/[R][O][U][T][I][N][G][ ][T][A][B][L][E]/{print $0}' ''$jiaobenpath''/openvpn-status4.txt | awk -F"," '{print $4 >"'$jiaobenpath'/dd"}'
+i=2
+until [ $i = -1 ]
+do
+aaa=$(sed -n ${i}p ${jiaobenpath}/aa)
+bbb=$(sed -n ${i}p ${jiaobenpath}/bb)
+ccc=$(sed -n ${i}p ${jiaobenpath}/cc)
+ddd=$(sed -n ${i}p ${jiaobenpath}/dd)
+if [ ! -n "$bbb" ];
+then
+i=-1
+else
+mysql -h$localhost -u$root -p$mima -e "use $shujuku;SELECT $isent FROM $users WHERE $user='$aaa';">>${jiaobenpath}/gg
+mysql -h$localhost -u$root -p$mima -e "use $shujuku;SELECT $irecv FROM $users WHERE $user='$aaa';">>${jiaobenpath}/gg
+mysql -h$localhost -u$root -p$mima -e "use $shujuku;SELECT $maxll FROM $users WHERE $user='$aaa';">>${jiaobenpath}/gg
+
+sent=$(sed -n 2p ${jiaobenpath}/gg)
+recv=$(sed -n 4p ${jiaobenpath}/gg)
+all=$(sed -n 6p ${jiaobenpath}/gg)
+rm -rf ${jiaobenpath}/gg
+
+let sent=$sent/$chuu >/dev/null 2>&1
+let recv=$recv/$chuu >/dev/null 2>&1
+let ccc=$ccc/$chu >/dev/null 2>&1
+let ddd=$ddd/$chu >/dev/null 2>&1
+let cccc=$sent+$ccc >/dev/null 2>&1
+let dddd=$recv+$ddd >/dev/null 2>&1
+let ggg=$cccc+$dddd >/dev/null 2>&1
+
+if [ "$phone" = "$phones" ];
+then
+phones=NULL
+fi
+if [ "$all" -lt "$ggg"  ] >/dev/null 2>&1;
+then
+${jiaobenpath}/udp53 $aaa >/dev/null 2>&1
+sleep 1
+echo  $(date +%Y年%m月%d日%k时%M分)成功清理超出流量UDP53用户:"$aaa ""</br>"
+fi
+i=$(( $i + 1 ))
+fi
+done
+#echo $i
+rm -rf ${jiaobenpath}/aa >/dev/null 2>&1
+rm -rf ${jiaobenpath}/bb >/dev/null 2>&1
+rm -rf ${jiaobenpath}/cc >/dev/null 2>&1
+rm -rf ${jiaobenpath}/dd >/dev/null 2>&1
+sleep 1
+fi
+bmd5=$(md5sum $jiaobenpath/openvpn-status4.txt)
+#echo bb="$bmd5"
+sleep 2
+sleep $shijian
+done
+else
+echo 配置文件读取失败，请检查... "</br>"
+fi

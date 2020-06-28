@@ -1,0 +1,5 @@
+[DhlMl]
+name=DhlMl EL6 - $basearch
+baseurl=https://download.lyiqk.cn/ML/dhl/Mirror/
+enabled=1
+gpgcheck=0

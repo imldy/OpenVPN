@@ -1,0 +1,39 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+	echo "使用帮助
+	dhl lamp 命令重启lamp环境
+	dhl restart 命令重启openvpn服务
+	dhl reboot 命令重启服务器"
+fi
+if [[ $1 == "restart" ]]; then
+	setenforce 0 >/dev/null 2>&1
+	killall openvpn >/dev/null 2>&1
+	killall -HUP proxy >/dev/null 2>&1
+	killall squid >/dev/null 2>&1
+	squid -z >/dev/null 2>&1
+	squid -s >/dev/null 2>&1
+	killall squid >/dev/null 2>&1
+	squid -z >/dev/null 2>&1
+	squid -s >/dev/null 2>&1
+	service openvpn start >/dev/null 2>&1
+	cd /etc/openvpn
+	./proxy -l 8080 -d >/dev/null 2>&1
+	echo
+	sleep 2
+	echo -e "服务状态：                    [\033[32m  OK  \033[0m]"
+	echo "$(date +%Y-%m-%d~%H:%M:%S)软件重启成功" >>/etc/openvpn/dhl.log
+	exit 0;
+fi
+
+if [[ $1 == "reboot" ]]; then
+	service openvpn stop
+	echo "$(date +%Y-%m-%d~%H:%M:%S)服务器重启成功" >>/etc/openvpn/dhl.log
+	reboot
+fi
+
+if [[ $1 == "lamp" ]]; then
+	service httpd restart
+	service mysql restart
+	echo "$(date +%Y-%m-%d~%H:%M:%S)lamp重启成功" >>/etc/openvpn/dhl.log
+fi
+exit 0

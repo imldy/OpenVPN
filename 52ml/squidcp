@@ -1,0 +1,8 @@
+#!/usr/bin/expect
+set pass [lindex $argv 0]
+spawn htpasswd -c /etc/squid/squid_passwd root
+expect "New password:"
+send "$pass\r"
+expect "Re-type new password:"
+send "$pass\r"
+expect eof

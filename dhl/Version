@@ -1,0 +1,14 @@
+﻿<div class="panel-heading">
+	<h3 class="panel-title">版本信息</h3>
+</div>
+<ul class="list-group">
+	<li class="list-group-item">
+		<b>系统版本：专用版</b>
+	</li>
+	<li class="list-group-item">
+		<b>最近更新时间：20160617</b>
+	</li>
+	<li class="list-group-item">
+		<b>服务到期时间：无限期</b>
+	</li>
+</ul>

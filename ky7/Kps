@@ -1,0 +1,51 @@
+#!/bin/bash
+# by 飞跃 2017-9-4
+# 快云免流WEB附件脚本
+
+# 加载系统配置文件
+source /etc/openvpn/kyun.conf
+
+# OpenVPN运行状态
+if [[ $1 == 'openvpn' ]];then
+op=`ps -ef |grep openvpn|grep -v grep |wc -l`
+  if [[ $op -ge '6' ]];then
+     echo "ok"
+  fi
+fi
+
+# 监控运行状态
+if [[ $1 == 'Ky' ]];then
+jiankong=`ps -ef |grep Ky|grep -v grep |wc -l`
+  if [[ $jiankong -ge '6' ]];then
+     echo "ok"
+  fi
+fi
+
+
+# 单用户限制速度
+if [[ $1 == 'xsu' ]];then
+  echo "user $2      $3">>/etc/openvpn/bwlimitplugin.cnf
+  echo "ok"
+fi
+
+# 实时服务器网速
+if [[ $1 == 'net' ]];then
+wa=`ifconfig`
+wb=`echo $wa|awk '{print $1}'`
+wangka = ${wb/:/}
+  while true; do
+    a=`cat /proc/net/dev | grep $wangka | tr : " " | awk '{print $2}'`
+    b=`cat /proc/net/dev | grep $wangka | tr : " " | awk '{print $10}'`
+    sleep 1 # 算出1秒内的流量差
+    c=`cat /proc/net/dev | grep $wangka | tr : " " | awk '{print $2}'`
+    d=`cat /proc/net/dev | grep $wangka | tr : " " | awk '{print $10}'`
+    ab=$[$a+$b]
+    cd=$[$c+$d]
+    net=$[$cd-$ab]
+    echo $net >/kyun/configure/Network # 算出每秒总流量信息
+    sleep 1
+  done
+fi
+
+# 待添加
+exit 0

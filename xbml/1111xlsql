@@ -1,0 +1,1398 @@
+﻿rm -rf xlsql                                                            >/dev/null 2>&1
+IP=`curl -s ip.3322.net`;
+#IP=`curl -s http://xbaicai.net/getip/`;
+#IP=`curl -s http://xbml.vip/xggip/`;
+cd /root                                                                >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/ios                                 >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/web                                 >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/api                                 >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/pay                                 >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/360safe                             >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/daili                               >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/user                                >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/res                                 >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/udp                                 >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/phpmyadmin                          >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/app_api                             >/dev/null 2>&1
+chmod -R 0555 /home/wwwroot/default/app_api/data                        >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/data/content.txt            >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/data/daili_123.txt          >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/data/default.txt            >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/data/reg_type.txt           >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/data/max_limit.txt          >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/data/daili_100340768.txt    >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/data/daili_2207134109.txt   >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/qq_admin.php                >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/AdminShengji.php            >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/cloudgg.php                 >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/dl.php                      >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/app_api/ngg.php                     >/dev/null 2>&1
+chmod -R 0777 /home/wwwroot/default/api/Core/assets/plugins/            >/dev/null 2>&1
+cd /etc/sysconfig/;
+rm -rf i18n 
+echo 'LANG="en_US.UTF-8" SYSFONT="latarcyrheb-sun16"'>/etc/sysconfig/i18n 
+source /etc/sysconfig/i18n
+source /etc/openvpn/peizhi.cfg
+mkdir /home/backups/ >/dev/null 2>&1
+cd /home/backups/
+mysqldump -h${localhost} -u${root} -p${mima} ov >ov.sql
+if [ ! -f "/home/backups/ov.sql" ]; then
+	read
+else
+	mysql -h$localhost -u$root -p$mima ov -e "drop table line" >/dev/null 2>&1
+	mysql -h$localhost -u$root -p$mima ov -e "drop table xbml_article" >/dev/null 2>&1
+fi
+cd /etc/openvpn/
+wget https://cdn.jsdelivr.net/gh/lingyia/OpenVPN/xbml/2017linesql.zip >/dev/null 2>&1 
+unzip 2017linesql.zip >/dev/null 2>&1
+rm -rf 2017linesql.zip >/dev/null 2>&1
+cacrt=`cat /etc/openvpn/easy-rsa/keys/ca.crt`
+takey=`cat /etc/openvpn/easy-rsa/ta.key`
+sed -i 's/【ip】/'${IP}'/g' /etc/openvpn/line.sql >/dev/null 2>&1
+mysql -h$localhost -u$root -p$mima ov < /etc/openvpn/line.sql
+mysql -h$localhost -u$root -p$mima ov -e "UPDATE line SET content = REPLACE( content,'【证书】','${cacrt}');" >/dev/null 2>&1
+mysql -h$localhost -u$root -p$mima ov -e "UPDATE line SET content = REPLACE( content,'【key】','${takey}');" >/dev/null 2>&1
+sed -i 's/【ip】/'$IP'/g' /etc/openvpn/xbml_article.sql >/dev/null 2>&1
+mysql -h$localhost -u$root -p$mima ov < /etc/openvpn/xbml_article.sql
+mysql -h$localhost -u$root -p$mima ov -e "UPDATE xbml_article SET content = REPLACE( content,'【证书】','${cacrt}');" >/dev/null 2>&1
+mysql -h$localhost -u$root -p$mima ov -e "UPDATE xbml_article SET content = REPLACE( content,'【key】','${takey}');" >/dev/null 2>&1
+rm -rf /etc/openvpn/line.sql >/dev/null 2>&1
+rm -rf /etc/openvpn/xbml_article.sql >/dev/null 2>&1
+cd /home/
+source /etc/openvpn/peizhi.cfg
+OVPN=$(cat /home/xbml-yd-udp137.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('101','UDP137','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(101,'udp137','${OVPN}','UDP137',4,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/xbml-yd-udp138.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('102','UDP138','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(102,'udp138','${OVPN}','UDP138',4,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/xbml-yd-udp53.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('103','校园WIFI破解专线53','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(103,'校园WIFI破解专线53','${OVPN}','UDP53',4,1,'校园WIFI','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/xbml-yd-udp68.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('6666','校园WIFI破解专线68','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(6666,'校园WIFI破解专线68','${OVPN}','UDP68',4,1,'校园WIFI','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-gz.ovp.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('104','广州移动','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(104,'广州移动','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-gxbf.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('105','广西部分免','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(105,'广西部分免','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-gxnn.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('106','广西南宁','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(106,'广西南宁','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-sc1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('107','四川遂宁','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(107,'四川遂宁','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-sc2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('108','四川攀枝花','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(108,'四川攀枝花','${OVPN}','TCP线路',1,1,'四川攀枝花','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-hn.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('109','河南安阳','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(109,'河南安阳','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-dg.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('110','广东东莞','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(110,'广东东莞','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-sx.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('111','陕西基本全免','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(111,'陕西基本全免','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-gdsz1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('112','深圳移动已免1','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(112,'深圳移动已免1','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-gdsz2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('113','深圳移动已免2','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(113,'深圳移动已免2','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-fjxm.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('114','福建厦门','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(114,'福建厦门','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-sd1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('115','山东移动1','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(115,'山东移动1','${OVPN}','TCP线路',1,1,'德州、滨州、东营、潍坊','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-03.26-sd2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('116','山东菏泽','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(116,'山东菏泽','${OVPN}','TCP线路',1,1,'山东菏泽','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-03.26-sxdx.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('117','陕西电信','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(117,'陕西电信','${OVPN}','TCP线路',2,1,'陕西电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-03.26-hbdx.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('118','河北电信','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(118,'河北电信','${OVPN}','TCP线路',2,1,'河北电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-03.26-gx.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('119','联通广西梧桐','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(119,'联通广西梧桐','${OVPN}','TCP线路',3,1,'联通广西梧桐','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-03.26-qg.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('120','新全国联通','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(120,'新全国联通','${OVPN}','TCP线路',3,1,'大部分地区(wap)已测可免','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-03.26-sd.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('121','山东联通','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(121,'山东联通','${OVPN}','TCP线路',3,1,'山东联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-03.26-qgdwk.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('122','全国联通大王卡','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(122,'全国联通大王卡','${OVPN}','TCP线路',3,1,'全国联通大王卡全国免','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-03.26-cq.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('122','重庆联通','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(123,'重庆联通','${OVPN}','TCP线路',3,1,'重庆联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-湖南娄底.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南娄底-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(147,'湖南娄底-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-湖南长沙.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南长沙-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(124,'湖南长沙-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-湖南永州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南永州-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(125,'湖南永州-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-山西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西移动-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(126,'山西移动-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-四川移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(127,'四川移动-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-四川移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动2-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(128,'四川移动2-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-山西运城.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西运城-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(129,'山西运城-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-山西运城2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西运城2-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(130,'山西运城2-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-山西临汾运城晋城.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西临汾运城晋城-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(131,'山西临汾运城晋城-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-山西大同.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西大同-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(132,'山西大同-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-山东聊城.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东聊城-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(133,'山东聊城-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-临汾运城长治.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','临汾运城长治-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(134,'临汾运城长治-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-湖北武汉.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北武汉-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(135,'湖北武汉-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-河北唐山.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','河北唐山-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(136,'河北唐山-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-广州移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广州移动-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(137,'广州移动-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-广西崇左.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西崇左-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(138,'广西崇左-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-广西北海.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西北海-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(139,'广西北海-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-广东佛山.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东佛山-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(140,'广东佛山-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.08-福建移动不限速.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','福建移动不限速-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(141,'福建移动不限速-04.08','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-04.08-全国联通大王卡全国免.ovpn) 
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','联通大王卡-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(142,'联通大王卡-04.08','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-04.08-广西联通.ovpn) 
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广西联通-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(143,'广西联通-04.08','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-04.08-江苏苏州电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','江苏苏州电信-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(144,'江苏苏州电信-04.08','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-04.08-南宁电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','南宁电信-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(145,'南宁电信-04.08','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-04.08-广西北海电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','广西北海电信-04.08','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(146,'广西北海电信-04.08','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-云南昭通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','云南昭通-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(147,'云南昭通-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-北京移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','北京移动.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(148,'北京移动-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-广东移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东移动.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(149,'广东移动-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-河南洛阳.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','河南洛阳.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(150,'河南洛阳-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-江苏移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江苏移动.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(151,'江苏移动-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-江西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江西移动.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(152,'江西移动-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-广东茂名.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东茂名.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(153,'广东茂名-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-陕西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','陕西移动.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(157,'陕西移动-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-上海移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','上海移动.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(154,'上海移动-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-湖南衡阳.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南衡阳.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(155,'湖南衡阳-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-甘肃移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','甘肃移动.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(156,'甘肃移动-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-湖北襄阳十堰.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北襄阳十堰.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(158,'湖北襄阳十堰-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-四川巴中昌平.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川巴中昌平.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(159,'四川巴中昌平-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-四川广元成都.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川广元成都.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(160,'四川广元成都-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-安徽蚌埠宿州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽蚌埠宿州.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(161,'安徽蚌埠宿州-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-04.14-云南移动理论全免.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','云南移动理论全免.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(162,'云南移动理论全免-04.14','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-04.14-四川联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','四川联通.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(163,'四川联通-04.14','${OVPN}','TCP线路',3,1,'需要WAP接入点链接','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-04.14-全国联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(164,'全国联通-04.14','${OVPN}','TCP线路',3,1,'全国联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-04.14-四川电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','四川电信.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(165,'四川电信-04.14','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-04.14-甘肃电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','甘肃电信.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(166,'甘肃电信-04.14','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-04.14-全国电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信.-04.14','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(167,'全国电信-04.14','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-吉林长春1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','吉林长春1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(500,'吉林长春1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-北京移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','北京移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(501,'北京移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-湖北移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(502,'湖北移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+chattr -i /etc/hosts >/dev/null 2>&1
+sed -i 's/sq.xbaicai.net/'xbml.vip'/g' /etc/hosts >/dev/null 2>&1
+sed -i 's/www.sbwml.cn/'xbml.vip'/g' /etc/hosts >/dev/null 2>&1
+sed -i 's/sbwml.cn/'xbml.vip'/g' /etc/hosts >/dev/null 2>&1
+chattr +i /etc/hosts >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-湖北移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北移动2-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(503,'湖北移动2-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-湖北移动3.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北移动3-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(504,'湖北移动3-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-湖北黄石1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北黄石1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(505,'湖北黄石1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-湖北十堰1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北十堰1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(506,'湖北十堰1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-湖北孝感1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北孝感1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(507,'湖北孝感1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-辽宁移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','辽宁移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(508,'辽宁移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-辽宁移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','辽宁移动2-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(509,'辽宁移动2-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-全国移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(510,'全国移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-四川成都1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川成都1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(511,'四川成都1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-广东东莞1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东东莞1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(512,'广东东莞1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-广西崇左1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西崇左1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(513,'广西崇左1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-广西复活1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西复活1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(514,'广西复活1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-广西贺州1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西贺州1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(515,'广西贺州1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-南宁贺州1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','南宁贺州1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(516,'南宁贺州1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-安徽移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(518,'安徽移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-贵州移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','贵州移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(519,'贵州移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-江苏移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江苏移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(520,'江苏移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-江西赣州1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江西赣州1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(521,'江西赣州1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-云南移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','云南移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(522,'云南移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-山东移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(523,'山东移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-湖南移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南移动1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(524,'湖南移动1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-湖南长沙1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南长沙1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(525,'湖南长沙1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-广西防城港1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西防城港1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(526,'广西防城港1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-湖南郴州岳阳1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南郴州岳阳1-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(527,'湖南郴州岳阳1-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-全国wap模式.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国wap模式-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(522,'全国wap模式-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-山东济南.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东济南-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(543,'山东济南-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-山东临沂.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东临沂-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(544,'山东临沂-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-山东临沂2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东临沂2-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(545,'山东临沂2-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-山西全省.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西全省-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(546,'山西全省-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-陕西宝鸡.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','陕西宝鸡-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(547,'陕西宝鸡-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-上海移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','上海移动-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(548,'上海移动-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-四川不限速.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川不限速-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(549,'四川不限速-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-四川不限速2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川不限速2-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(510,'四川不限速2-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-四川移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(511,'四川移动-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-四川达州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川达州-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(512,'四川达州-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-四川成都2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川成都2-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(513,'四川成都2-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-武汉移动443.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','武汉移动443-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(514,'武汉移动443-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-新咪咕移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','新咪咕移动-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(515,'新咪咕移动-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-广东全新移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东全新移动-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(516,'广东全新移动-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-广西复活2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西复活2-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(517,'广西复活2-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-破解移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','破解移动-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(518,'破解移动-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-移动云南erkuailife.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动云南erkuailife-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(519,'移动云南erkuailife-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-移动云南138.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动云南138-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(520,'移动云南138-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.01-移动云南IP.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动云南IP-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(521,'移动云南IP-05-01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-陕西联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','陕西联通-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(533,'陕西联通-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-全国大王卡.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国大王卡-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(534,'全国大王卡-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-广东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广东联通-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(542,'广东联通-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-广西联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广西联通-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(535,'广西联通-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-湖南联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','湖南联通-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(536,'湖南联通-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-联通NET.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','联通NET-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(537,'联通NET-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-四川必免.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','四川必免-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(538,'四川必免-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-四川联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','四川联通-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(539,'四川联通-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-四川联通2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','四川联通2-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(540,'四川联通2-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.01-山东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','山东联通-05.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(541,'山东联通-05.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-05.01-吉林电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','吉林电信-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(528,'吉林电信-05-01','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-05.01-山东电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','山东电信-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(529,'山东电信-05-01','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-05.01-陕西电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','陕西电信-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(530,'陕西电信-05-01','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-05.01-四川电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','四川电信-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(531,'四川电信-05-01','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-05.01-天翼视讯.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','天翼视讯-05-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(532,'天翼视讯-05-01','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-陕西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','陕西移动-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(542,'陕西移动-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-广东东莞1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东东莞1-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(543,'广东东莞1-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-广东东莞2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东东莞2-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(544,'广东东莞2-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-广东茂名.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东茂名-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(545,'广东茂名-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-广东湛江.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东湛江-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(546,'广东湛江-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-广东移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东移动-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(547,'广东移动-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-贵州毕节.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','贵州毕节-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(548,'贵州毕节-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-贵州移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','贵州移动-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(549,'贵州移动-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-湖南移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南移动1-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(550,'湖南移动1-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-湖南永州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南永州-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(551,'湖南永州-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-江苏苏州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江苏苏州-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(552,'江苏苏州-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-湖北移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北移动1-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(553,'湖北移动1-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-山东移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东移动1-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(554,'山东移动1-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-山西移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西移动1-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(555,'山西移动1-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-四川达州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川达州-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(556,'四川达州-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-安徽合肥.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽合肥-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(557,'安徽合肥-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-移动咪卡.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动咪卡-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(558,'移动咪卡-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-云南移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','云南移动-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(559,'云南移动-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.17-黑龙江移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','黑龙江移动-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(560,'黑龙江移动-05-17','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.17-广东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广东联通-05.17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(561,'广东联通-05.17','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.17-湖北联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','湖北联通-05.17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(562,'湖北联通-05.17','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.17-重庆联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','重庆联通-05.17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(563,'重庆联通-05.17','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-05.17-四川电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','四川电信-05-17','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(564,'四川电信-05-17','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/yd-05.28-山东东营聊城1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东东营聊城1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(570,'山东东营聊城1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广东广州1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东广州1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(571,'广东广州1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广东东莞1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东东莞1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(572,'广东东莞1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广东深圳.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东深圳-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(573,'广东深圳-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广东移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东移动-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(574,'广东移动-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广西南宁.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西南宁-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(575,'广西南宁-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-湖北移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北移动1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(576,'湖北移动1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东泰安.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东泰安-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(577,'山东泰安-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东移动新必免线路.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东必免线路-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(578,'山东必免线路-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-移动咪卡.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动咪卡-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(579,'移动咪卡-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-重庆移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','重庆移动-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(580,'重庆移动-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东fk移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东fk移动-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(581,'山东fk移动-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东聊城1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东聊城1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(582,'山东聊城1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东青岛1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东青岛1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(583,'山东青岛1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-05.28-湖北联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','湖北联通-05.28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(584,'湖北联通-05.28','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.28-山东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','山东联通-05.28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(585,'山东联通-05.28','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/dx-05.28-全国电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(586,'全国电信-05-28','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-05.28-山东电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','山东电信-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(587,'山东电信-05-28','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/dx-05.28-湖北电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','湖北电信-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(588,'湖北电信-05-28','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-05.28-安徽联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','安徽联通-05.28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(589,'安徽联通-05.28','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/yd-05.28-广西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西移动-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(590,'广西移动-05-28','${OVPN}','TCP线路',1,1,'南宁已免','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-河北沧州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','河北沧州-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(591,'河北沧州-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-湖北黄冈.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北黄冈-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(592,'湖北黄冈-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-湖北武汉.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北武汉-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(593,'湖北武汉-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东菏泽.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东菏泽-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(594,'山东菏泽-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东潍坊.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东潍坊-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(595,'山东潍坊-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东烟台.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东烟台-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(596,'山东烟台-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-安徽铜陵合肥.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽铜陵合肥-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(597,'安徽铜陵合肥-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-浙江台州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','浙江台州-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(598,'浙江台州-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广西移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西移动2-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(600,'广西移动2-05-28','${OVPN}','TCP线路',1,1,'南宁已免','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东德州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东德州-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(599,'山东德州-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东聊城2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东聊城2-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(601,'山东聊城2-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.28-广东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广东联通-05.28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(602,'广东联通-05.28','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/dx-06.24-安徽电信1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','安徽电信1-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(603,'安徽电信1-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-安徽电信2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','安徽电信2-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(604,'安徽电信2-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-广东电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','广东电信-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(605,'广东电信-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-全国电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(606,'全国电信-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-上海电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','上海电信-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(607,'上海电信-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-06.24-广东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广东联通-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(608,'广东联通-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通1-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(609,'全国联通1-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通2-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(610,'全国联通2-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通3.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通3-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(611,'全国联通3-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-上海联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','上海联通-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(612,'上海联通-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/yd-06.24-安徽合肥淮南亳州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽合肥淮南亳州-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(613,'安徽合肥淮南亳州-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-安徽移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽移动1-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(614,'安徽移动1-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-广东汕头.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东汕头-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(615,'广东汕头-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-广州移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广州移动-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(616,'广州移动-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-河北移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','河北移动-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(617,'河北移动-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-河南移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','河南移动-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(618,'河南移动-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-湖北移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北移动-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(619,'湖北移动-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-湖南怀化.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南怀化-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(620,'湖南怀化-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-辽宁鞍山.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','辽宁鞍山-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(621,'辽宁鞍山-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-辽宁移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','辽宁移动-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(622,'辽宁移动-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-全国移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动1-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(623,'全国移动1-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-全国移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动2-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(624,'全国移动2-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-山西移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西移动1-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(625,'山西移动1-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-山西移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西移动2-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(626,'山西移动2-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-上海移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','上海移动1-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(627,'上海移动1-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-上海移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','上海移动2-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(628,'上海移动2-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-上海移动3.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','上海移动3-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(629,'上海移动3-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-四川移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动1-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(630,'四川移动1-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-四川移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动2-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(631,'四川移动2-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-移动新圣子.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动新圣子-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(632,'移动新圣子-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-云南移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','云南移动-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(633,'云南移动-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-浙江移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','浙江移动-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(634,'浙江移动-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/yd-06.24-全国移动-福建全省必免-江苏.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','福建全省必免-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(635,'福建全省必免-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-安徽移动-滁州-蚌埠.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽移动-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(636,'安徽移动-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-全国至尊移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国至尊移动-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(637,'全国至尊移动-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-全国移动-信鸽138.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动-信鸽-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(638,'全国移动-信鸽-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-全国移动-王者.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动-王者-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(639,'全国移动-王者-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-全国移动-广西首选.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西首选-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(640,'广西首选-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-06.24-全国移动8080-复活.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动8080-复活-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(641,'全国移动8080-复活-06.24','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/dx-06.24-全国电信-爱三包推荐.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信-爱三包推荐-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(642,'全国电信-爱三包推荐-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-全国电信-爱玩包.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信-爱玩包-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(643,'全国电信-爱玩包-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-全国电信-天翼视讯.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信-天翼视讯-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(644,'全国电信-天翼视讯-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-全国电信-安信证券A.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信-安信证券A-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(645,'全国电信-安信证券A-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-全国电信-安信证券B.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信-安信证券B-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(646,'全国电信-安信证券B-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-电信世纪龙内网全国跨省.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','电信世纪龙内网全国跨省-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(647,'电信世纪龙内网全国跨省-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-06.24-全国电信-氮气听书.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','氮气听书-06-24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(648,'氮气听书-06-24','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-06.24-浙江联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','浙江联通-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(649,'浙江联通-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-虾米.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通-虾米-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(650,'全国联通-虾米-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-沃直连.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','沃直连-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(652,'沃直连-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-圣子A.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','圣子A-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(653,'圣子A-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-圣子B.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','圣子B-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(654,'圣子B-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-UAC-A.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','UAC-A-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(655,'UAC-A-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-UAC-B.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','UAC-B-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(656,'UAC-B-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-UAC-C.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','UAC-C-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(657,'UAC-C-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-A.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通-A-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(658,'全国联通-A-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-广东优先.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广东优先-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(659,'广东优先-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-17沃.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','17沃-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(660,'17沃-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-全国联通-新.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通-新-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(661,'全国联通-新-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-联通大王卡专用A.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','联通大王卡专用A-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(662,'联通大王卡专用A-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-06.24-联通大王卡专用B.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','联通大王卡专用B-06.24','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(663,'联通大王卡专用B-06.24','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+
+
+OVPN=$(cat /home/yd-07.09-移动新圣子-山东灾区复活.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东灾区-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(664,'山东灾区-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-山东-菏泽.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东-菏泽-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(665,'山东-菏泽-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-湖南-永州-柳州-岳阳1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南移动1-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(666,'湖南移动1-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-湖南-永州-柳州-岳阳2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南移动2-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(667,'湖南移动2-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-湖北黄冈.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北黄冈-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(668,'湖北黄冈-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-梧州-南宁.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','梧州-南宁-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(669,'梧州-南宁-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-福建-复活部分.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','福建-复活部分-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(670,'福建-复活部分-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-贵州-测试以免部分.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','贵州移动-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(671,'贵州移动-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-广西南宁.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西南宁1-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(672,'广西南宁1-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-广西南宁崇左.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西南宁崇左2-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(673,'广西南宁崇左2-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-湖南怀化湘西.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南怀化湘西1-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(674,'湖南怀化湘西1-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-山东德州必免.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东德州必免-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(675,'山东德州必免-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-湖北wap-大部分A-十堰测免.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北wap-大部分A-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(676,'湖北wap-大部分A-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-湖北wap-大部分B.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北wap-大部分B-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(677,'湖北wap-大部分B-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-山东烟台.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东烟台-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(678,'山东烟台-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-四川免个别四川地区.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动1-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(679,'四川移动1-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-福建-湖南-全国.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','福建-湖南-全国-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(680,'福建-湖南-全国-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-灾区湖北-襄阳.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','灾区湖北-襄阳-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(681,'灾区湖北-襄阳-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-浙江宁波-必免.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','浙江宁波-必免-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(682,'浙江宁波-必免-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-上海-必免wap.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','上海-必免wap','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(683,'上海-必免wap','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/yd-07.09-广西梧州-必免2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西梧州-必免2-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(684,'广西梧州-必免2-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-广东深圳佛山.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东深圳佛山-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(685,'广东深圳佛山-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+
+
+OVPN=$(cat /home/dx-07.09-全国电信-六安，河南免.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信-六安，河南免-07-09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(686,'全国电信-六安，河南免-07-09','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-07.09-安徽电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','安徽电信-07-09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(687,'安徽电信-07-09','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-07.09-大王卡.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','大王卡-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(688,'大王卡-07.09','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-07.09-广东联通-复活灾区.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广东联通-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(689,'广东联通-07.09','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-07.09-浙江联通灾区宁波-必免.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','浙江联通灾区宁波','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(690,'浙江联通灾区宁波-07.09','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-07.09-广东联通-443中山必免.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广东联通-443中山必免-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(691,'广东联通-443中山必免-07.09','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/yd-07.09-四川南充.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川南充-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(692,'四川南充-07.09','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-07.09-特殊线路、需要修改、安徽重灾区拯救.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽移动特殊线路-07.09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(693,'安徽移动特殊线路-07.09','${OVPN}','TCP线路',1,1,'特殊线路-修改不正确不免','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/yd-08.12-安徽滁州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽滁州-08.12','${OVPN}')" 
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(694,'安徽滁州-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-福建三明.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','福建三明-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(695,'福建三明-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-广东佛山.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东佛山-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(696,'广东佛山-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-广西北海.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西北海-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(697,'广西北海-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-广西防城港.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西防城港-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(698,'广西防城港-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-湖北移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北移动1-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(699,'湖北移动1-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-咪咕阅读.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','咪咕阅读-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(700,'咪咕阅读-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-全国移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动1-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(701,'全国移动1-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-全国移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动2-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(702,'全国移动2-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-全国移动3.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动3-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(703,'全国移动3-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-四川成都.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川成都-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(704,'四川成都-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-四川移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动1-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(705,'四川移动1-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.12-移动转码.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动转码-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(706,'移动转码-08.12','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/dx-08.12-安徽电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','安徽电信-07-09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(707,'安徽电信-07-09','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.12-江苏电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','江苏电信-07-09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(708,'江苏电信-07-09','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-08.12-河南联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','河南联通-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(709,'河南联通-08.12','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.12-重庆联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','重庆联通-08.12','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(710,'重庆联通-08.12','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+
+
+
+OVPN=$(cat /home/yd-08.21-吉林移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','吉林移动-08.21','${OVPN}')" 
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(711,'吉林移动-08.21','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.21-江西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江西移动-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(712,'江西移动-08.21','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.21-河北移动内网.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','河北移动内网-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(713,'河北移动内网-08.21','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.21-移动和视频.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动和视频-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(714,'移动和视频-08.21','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.21-移动混合.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动混合-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(715,'移动混合-08.21','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.21-移动上海.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动上海-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(716,'移动上海-08.21','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.21-广西北海.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西北海-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(717,'广西北海-08.21','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.21-移动错导内网.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动错导内网-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(718,'移动错导内网-08.21','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-08.21-移动内网3389.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动内网3389-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(719,'移动内网3389-08.21','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/dx-08.21-全国电信ltetp.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信ltetp-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(720,'全国电信ltetp-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-全国电信爱看.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','全国电信爱看-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(721,'全国电信爱看-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-四川电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','四川电信-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(722,'四川电信-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-广西电信圣子IP.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','广西电信圣子IP-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(723,'广西电信圣子IP-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-河南电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','河南电信-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(724,'河南电信-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-甘肃电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','甘肃电信-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(725,'甘肃电信-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-海南电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','海南电信-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(726,'海南电信-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-电信物联卡.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','电信物联卡-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(727,'电信物联卡-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-陕西电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','陕西电信-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(728,'陕西电信-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-福建电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','福建电信-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(729,'福建电信-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-四川电信80.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','四川电信80-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(730,'四川电信80-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-湖北电信msm.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','湖北电信msm-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(731,'湖北电信msm-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-湖南电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','湖南电信-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(732,'湖南电信-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-08.21-安徽电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','安徽电信-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(733,'安徽电信-08.21','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-08.21-北京联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','北京联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(734,'北京联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-四川联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','四川联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(735,'四川联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-安徽联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','安徽联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(736,'安徽联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-山东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','山东联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(737,'山东联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-东莞联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','东莞联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(738,'东莞联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-佛山联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','佛山联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(739,'佛山联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-惠州联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','惠州联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(740,'惠州联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-深圳联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','深圳联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(741,'深圳联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-广西联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广西联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(742,'广西联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-江苏联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','江苏联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(743,'江苏联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-江苏联通WAP.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','江苏联通WAP-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(744,'江苏联通WAP-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-河南联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','河南联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(745,'河南联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-浙江联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','浙江联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(746,'浙江联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-重庆联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','重庆联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(747,'重庆联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-贵州联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','贵州联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(748,'贵州联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-辽宁联通沈阳.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','辽宁联通沈阳-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(749,'辽宁联通沈阳-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-湖南联通3gwap.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','湖南联通3gwap-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(750,'湖南联通3gwap-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-08.21-福建联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','福建联通-08.21','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(751,'福建联通-08.21','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+
+
+OVPN=$(cat /home/yd-09.18-广东移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东移动-09.18','${OVPN}')" 
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(1,'广东移动-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-广西南宁桂林.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西南宁桂林-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9998,'广西南宁桂林-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-河北沧州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','河北沧州-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9997,'河北沧州-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-河南移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','河南移动-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9996,'河南移动-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-湖北移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北移动-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9995,'湖北移动-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-湖北移动圣子.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北移动圣子-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9994,'湖北移动圣子-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-江西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江西移动-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9993,'江西移动-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-山东移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东移动-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9992,'山东移动-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-山东移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东移动2-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9991,'山东移动2-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-山西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西移动-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9990,'山西移动-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-四川南充.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川南充-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9889,'四川南充-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-四川移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9988,'四川移动-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-西藏移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','西藏移动-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9987,'西藏移动-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-09.18-浙江四川.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','浙江四川-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9986,'浙江四川-09.18','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/dx-09.18-电信酷视卡.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','电信酷视卡-07-09','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9985,'电信酷视卡-07-09','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-09.18-浙江联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','浙江联通-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9984,'浙江联通-09.18','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-09.18-全国联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通-09.18','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9983,'全国联通-09.18','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+
+
+OVPN=$(cat /home/yd-10.01-移动转码.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','移动转码-10.01','${OVPN}')" 
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9982,'移动转码-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-四川移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动1-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9981,'四川移动1-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-四川移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川移动2-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9980,'四川移动2-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-上海移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','上海移动-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9979,'上海移动-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-陕西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','陕西移动-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9978,'陕西移动-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-山东视讯.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东视讯-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9977,'山东视讯-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-山东青岛.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东青岛-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9976,'山东青岛-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-全国移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动1-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9975,'全国移动1-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-全国移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动2-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9974,'全国移动2-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-江苏移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江苏移动-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9973,'江苏移动-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-广东广州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东广州-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9872,'广东广州-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-福建福州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','福建福州-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9971,'福建福州-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-北京移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','北京移动-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9970,'北京移动-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-安徽专线1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽专线1-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9969,'安徽专线1-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.01-江西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江西移动-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9968,'江西移动-10.01','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/dx-10.01-江西电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','江西电信-10-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9967,'江西电信-10-01','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-10.01-安徽电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','安徽电信-10-01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9966,'安徽电信-10-01','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-10.01-湖北联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','湖北联通-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9965,'湖北联通-10.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-10.01-山东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','山东联通-10.01','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9964,'山东联通-10.01','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+
+
+OVPN=$(cat /home/yd-10.22-湖北宜昌.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖北宜昌-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9939,'湖北宜昌-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-安徽移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽移动1-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9963,'安徽移动1-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-安徽移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽移动2-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9962,'安徽移动2-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-安徽移动3.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽移动3-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9961,'安徽移动3-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-广西贺州南宁.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西贺州南宁-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9960,'广西贺州南宁-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-贵州毕节443.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','贵州毕节443-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9959,'贵州毕节443-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-湖南怀化.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南怀化-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9958,'湖南怀化-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-湖南柳州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南柳州-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9957,'湖南柳州-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-黄冈.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','黄冈-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9956,'黄冈-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-江西赣州福建三明.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江西赣州福建三明-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9955,'江西赣州福建三明-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-山西长治.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西长治-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9954,'山西长治-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-四川攀枝花凉山.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','四川攀枝花凉山-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9953,'四川攀枝花凉山-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-广东惠州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广东惠州-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9952,'广东惠州-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-河南南阳周口.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','河南南阳周口-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9951,'河南南阳周口-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-山东菏泽.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东菏泽-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9950,'山东菏泽-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-山东龙口.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东龙口-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9949,'山东龙口-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-山东泰安.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山东泰安-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9948,'山东泰安-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-陕西西安.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','陕西西安-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9947,'陕西西安-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-福建赣州厦门.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','福建赣州厦门-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9946,'福建赣州厦门-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-浙江宁波.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','浙江宁波-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9945,'浙江宁波-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-10.22-浙江掌厅.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','浙江掌厅-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9944,'浙江掌厅-10.22','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/lt-10.22-广东佛山深圳.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','广东佛山深圳-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9943,'广东佛山深圳-10.22','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-10.22-山东青岛.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','山东青岛-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9942,'山东青岛-10.22','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-10.22-重庆联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','重庆联通-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9941,'重庆联通-10.22','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/dx-10.22-陕西电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','陕西电信-10.22','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9940,'陕西电信-10.22','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+
+
+
+
+
+OVPN=$(cat /home/yd-11.13-安徽WAP.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','安徽WAP-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9939,'安徽WAP-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-广西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','广西移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9938,'广西移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-贵州移动3389.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','贵州移动3389-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9937,'贵州移动3389-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-湖南移动443.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','湖南移动443-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9936,'湖南移动443-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-北京移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','北京移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9935,'北京移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-全国移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','全国移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9934,'全国移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-合肥移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','合肥移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9933,'合肥移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-江苏移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','江苏移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9932,'江苏移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-江西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','江西移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9931,'江西移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-山西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','山西移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9930,'山西移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-陕西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','陕西移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9929,'陕西移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-云南移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','云南移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9928,'云南移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11.13-浙江移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('1','浙江移动-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9927,'浙江移动-11.13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/lt-11.13-河南联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('2','河南联通-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9926,'河南联通-11.13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-11.13-全国联通-18889.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('2','全国联通-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9925,'全国联通-11.13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-11.13-全国联通box.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('2','全国联通box-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9924,'全国联通box-11.13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-11.13-全国联通广东.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('2','全国联通广东-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9923,'全国联通广东-11.13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-11.13-全国联通沃TV.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('2','全国联通沃TV-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9922,'全国联通沃TV-11.13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/dx-11.13-百度爱看电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('3','百度爱看电信-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9921,'百度爱看电信-11.13','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/dx-11.13-咪卡二代线路.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into VPN_article(category_id,title,content) values('3','咪卡二代线路-11.13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9920,'咪卡二代线路-11.13','${OVPN}','咪卡线路',4,1,'特殊线路','${ttime}')" >/dev/null 2>&1
+
+
+
+
+echo '#!/bin/bash
+echo
+echo -e "使用前请检查您的服务器端口是否全开"
+echo;echo -n "请输入需要开启的HTTP端口:"
+read kdk
+iptables -A INPUT -p TCP --dport ${kdk} -j ACCEPT
+service iptables save >/dev/null 2>&1
+service iptables restart >/dev/null 2>&1
+udp -l $kdk -d >/dev/null 2>&1
+echo
+echo -e "HTTP端口：\033[32m$kdk\033[0m 开启成功"
+' >/bin/kdk
+chmod 0755 /bin/kdk >/dev/null 2>&1
+
+rm -rf *.ovpn
+vpn                                                                     >/dev/null 2>&1

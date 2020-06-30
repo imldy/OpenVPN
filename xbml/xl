@@ -1,0 +1,43 @@
+#!/bin/bash
+echo -e "\033[33m========================================================================= \033[0m"
+echo -e "\033[36m                     不知年少轻狂、只知胜者为王 \033[0m"
+echo -e "\033[36m                       官网网站：xbml.vip \033[0m"
+echo -e "\033[36m                       小白QQ：1475129762 \033[0m"
+echo -e "\033[36m                       免流交流群:173504018\033[0m"
+echo
+echo
+echo -e "\033[0;1;35m                  1.切换到线路定位带节点               【欢迎使用】     \033[0m"   
+echo             
+echo -e "\033[0;1;35m                  2.切换到线路定位无节点               【欢迎使用】     \033[0m"                
+echo  
+echo -e "\033[0;1;35m                  3.切换到线路普通无定位               【欢迎使用】     \033[0m"
+echo                                                                                                                  
+echo -e "\033[36m                                                by 小白免流       \033[0m"
+echo -e "\033[33m========================================================================== \033[0m"
+echo
+echo
+echo -n "输入您要选择的定位: " 
+read mode
+if [[ $mode == "1" ]]     
+then
+echo -e "安装类型：\033[36m切换到线路定位带节点\033[0m" ;  
+\cp -rf /home/wwwroot/default/app_api/mode/jdline.php  /home/wwwroot/default/app_api/mode/line.php 
+echo -e "\033[31m温馨提示：定位带节点切换完成\033[0m"
+exit 0;
+fi
+
+if [[ $mode == "2" ]]     
+then
+echo -e "安装类型：\033[36m切换到线路定位无节点\033[0m" ;  
+\cp -rf /home/wwwroot/default/app_api/mode/wjdline.php  /home/wwwroot/default/app_api/mode/line.php 
+echo -e "\033[31m温馨提示：定位不带节点切换完成\033[0m"
+exit 0;
+fi
+
+if [[ $mode == "3" ]]     
+then
+echo -e "安装类型：\033[36m切换到线路普通无定位\033[0m" ;  
+\cp -rf /home/wwwroot/default/app_api/mode/ptline.php  /home/wwwroot/default/app_api/mode/line.php 
+echo -e "\033[31m温馨提示：无定位无节点切换完成\033[0m"
+exit 0;
+fi

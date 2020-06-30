@@ -1,0 +1,17 @@
+echo -e '\033[31m锁定目录权限\033[0m		  [\033[32m  OK  \033[0m]'
+chattr +i /home/wwwroot/default/360safe
+chattr +i /home/wwwroot/default/htdz
+chattr +i /home/wwwroot/default/phpmyadmin
+chattr +i /home/wwwroot/default/daili
+chattr +i /home/wwwroot/default/ios
+chattr +i /home/wwwroot/default/pay
+chattr +i /home/wwwroot/default/web/css
+chattr +i /home/wwwroot/default/web
+chattr +i /home/wwwroot/default/user
+chattr +i /home/wwwroot/default
+chattr +i /home/wwwroot/default/app_api/config.php
+chattr +i /home/wwwroot/default/api/Core
+chattr +i /home/wwwroot/default/api/Conf
+chattr +i /home/wwwroot/default/api/
+exit 0;
+

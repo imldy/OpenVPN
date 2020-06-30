@@ -1,0 +1,5 @@
+#!/bin/bash
+#脚本由小白编写
+#改版权的不要脸
+netstat -ntlp
+exit 0;

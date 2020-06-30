@@ -1,0 +1,513 @@
+#!/bin/bash
+rm -rf $0
+vpnport=443
+mpport=8080
+dabao=xbml-$(date +%Y-%m-%d-%H:%M:%S)-openvpn.zip;
+IP=`curl -s ip.3322.net`;
+Welcome='
+==================================================================
+                        一键线路生成脚本
+                  Powered by www.xbml.vip 2017
+                      All Rights Reserved                           
+                                                                         
+                                by 小白流控 2017-11-13	
+==================================================================
+';
+echo -e "\033[36m $Welcome \033[0m";
+echo
+echo -e "\033[35m不知年少轻狂、只知胜者为王 \033[0m"
+echo
+echo -e '\033[33mby：小白\033[0m'
+echo
+echo -e "\033[31m自动识别管理信息，请稍后......\033[0m"
+if [ ! -e "/etc/openvpn/gl.cfg" ];then
+echo
+echo -e "\033[36m管理信息不存在、请输入信息\033[0m"
+echo
+echo -e "\033[31m输入您的Web流控端口号(默认 1234)  \033[0m"
+echo
+echo -n -e "\033[36m请输入Web流控端口号\033[0m \033[33m【温馨提示:默认端口：1234】\033[0m :"
+read port
+if [[ -z $port ]]
+then
+port=1234
+fi
+fi 
+echo
+source /etc/openvpn/gl.cfg >/dev/null 2>&1
+echo -e "\033[36m流控端口为: $port\033[0m"
+sleep 2
+echo
+echo
+onlock  >/dev/null 2>&1
+cd /home
+echo "# 小白云免配置 安徽WAP
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+# 需要解析域名
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy-option EXT1 "POST http://wap.gd.10086.cn/HTTP/1.1"
+http-proxy-option EXT1 "Host: wap.gd.10086.cn"
+http-proxy-option EXT1 "POST http://wap.bj.10086.cn/HTTP/1.1"
+http-proxy-option EXT1 "Host: wap.bj.10086.cn"
+http-proxy-option EXT1 "POST http://wap.sc.10086.cn/HTTP/1.1"
+http-proxy-option EXT1 "Host: wap.sc.10086.cn"
+http-proxy-option EXT1 "POST http://wap.sd.10086.cn/HTTP/1.1"
+http-proxy-option EXT1 "Host: wap.sd.10086.cn"
+http-proxy-option EXT1 "POST http://wap.sn.10086.cn/HTTP/1.1"
+http-proxy-option EXT1 "Host: wap.sn.10086.cn"
+http-proxy-option EXT1 "POST http://wap.10086.cn/HTTP/1.1"
+http-proxy-option EXT1 "Host: wap.10086.cn"
+http-proxy-option EXT1 "POST http://rd.go.10086.cn/HTTP/1.1"
+http-proxy-option EXT1 "Host: rd.go.10086.cn"
+http-proxy wap.10086.cn.$IP 8080 
+remote wap.gd.10086.cn 80 tcp-client
+########免流代码######## ">http-yd-11-13-ahwap.ovpn
+echo '
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+auth-user-pass
+ns-cert-type server
+redirect-gateway
+keepalive 20 60
+comp-lzo
+verb 3
+mute 20
+route-method exe
+route-delay 2
+'>http-yd-11-13-xbml2.ovpn
+echo "## 证书
+<ca>
+`cat ca.crt`
+</ca>
+key-direction 1
+<tls-auth>
+`cat ta.key`
+</tls-auth>
+">http-yd-11-13-xbml3.ovpn
+cat http-yd-11-13-ahwap.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-安徽WAP.ovpn
+
+echo "# 小白云免配置 广西移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80 
+http-proxy-option EXT1 "Host:gd.10086.cn/sfstjft/"
+http-proxy $IP 8080 
+http-proxy-option EXT1 xbml 127.0.0.1:443 
+########免流代码######## ">http-yd-11-13-gx.ovpn
+cat http-yd-11-13-gx.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-广西移动.ovpn
+
+echo "# 小白云免配置 贵州移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy-option EXT1 "POST http://wap.gz.10086.cn"
+http-proxy-option EXT1 "xbml 127.0.0.1:440"
+http-proxy-option EXT1 "Host: wap.gz.10086.cn HTTP/1.1"
+http-proxy $IP 8080
+remote wap.gz.10086.cn 3389 tcp-client
+########免流代码########">http-yd-11-13-gz3389.ovpn
+cat http-yd-11-13-gz3389.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-贵州移动3389.ovpn
+
+echo "# 小白云免配置 湖南移动443
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote $IP:443@211.138.250.72 80
+http-proxy-option EXT1 Host:211.138.250.72 
+http-proxy-option EXT1 GET
+http-proxy-option EXT1 POST
+http-proxy-option EXT1 xbml
+http-proxy-option EXT1 127.0.0.1
+http-proxy 211.138.250.72 80
+########免流代码######## ">http-yd-11-13-hn443.ovpn
+cat http-yd-11-13-hn443.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-湖南移动443.ovpn
+
+echo "# 小白云免配置 北京移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote wap.jf.10086.cn 80
+http-proxy $IP 8080
+http-proxy-option EXT1 " xbml 127.0.0.1:443"
+http-proxy-option EXT1 GET http://12580wap.10086.cn HTTP/1.1
+http-proxy-option EXT1 Host:
+http-proxy-option EXT1 Host: wap.jf.10086.cn 
+########免流代码######## ">http-yd-11-13-bjfj.ovpn
+cat http-yd-11-13-bjfj.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-北京移动.ovpn
+
+echo "# 小白云免配置 全国移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote $IP:443@211.138.250.72 80
+http-proxy-option EXT1 Host:211.138.250.72 
+http-proxy-option EXT1 GET
+http-proxy-option EXT1 POST
+http-proxy-option EXT1 xbml
+http-proxy-option EXT1 127.0.0.1
+http-proxy 211.138.250.72 80
+########免流代码######## ">http-yd-11-13-qgyd.ovpn
+cat http-yd-11-13-qgyd.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-全国移动.ovpn
+
+echo "# 小白云免配置 合肥移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote wap.10086.cn.cmvideo.online 8080
+http-proxy-option EXT1 VPN
+http-proxy-option GET /public/ringmaker01/n16/2016/10/2016%E5%B9%B410%E6%9C%8814%E6%97%A515%E7%82%B952%E5%88%86%E7%B4%A7%E6%80%A5%E5%86%85%E5%AE%B9%E5%87%86%E5%85%A5%E7%AE%80%E5%8D%95%E5%BF%AB%E4%B9%905%E9%A6%96/%E5%85%A8%E6%9B%B2%E8%AF%95%E5%90%AC/Mp3_128_44_16/%E5%82%BB%E5%82%BB%E7%AD%89-%E5%AD%99%E5%AD%90%E6%B6%B5.mp3?channelid=03&k=7f0e5a1cf01522c1&t=1476991262 HTTP/1.1
+http-proxy-option "Accept: */*"
+http-proxy-option "User-Agent: migumusic"
+http-proxy-option "Range: bytes=0-"
+http-proxy-option "Connection: Close"
+http-proxy-option "imei:971ab76ef00772371c4f3dc0dbd16bd0"
+http-proxy-option "imsi:b7cf876ebab6f01f588a7c6477b04bce"
+http-proxy-option EXT1 woiml 127.0.0.1:443
+http-proxy  $IP 8080
+########免流代码######## ">http-yd-11-13-hf.ovpn
+cat http-yd-11-13-hf.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-合肥移动.ovpn
+
+echo "# 小白云免配置 江苏移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+;http-proxy-retry
+;http-proxy [proxy server] [proxy port]
+http-proxy 10.0.0.172 80
+http-proxy-option EXT1 " "Host:$IP:443
+http-proxy-option EXT1 Host:wap.js.10086.cn
+########免流代码######## ">http-yd-11-13-js.ovpn
+cat http-yd-11-13-js.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-江苏移动.ovpn
+
+echo "# 小白云免配置 江西移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote wap.gd.10086.cn 80
+http-proxy-option EXT1 "POST http://wap.gd.10086.cn"
+http-proxy-option EXT1 "xbml 127.0.0.1:443"
+http-proxy-option EXT1 "Host: wap.gd.10086.cn / HTTP/1.1"
+http-proxy $IP 8080
+########免流代码######## ">http-yd-11-13-jx.ovpn
+cat http-yd-11-13-jx.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-江西移动.ovpn
+
+echo "# 小白云免配置 山西移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy-option EXT1 "X-Online-Host: wap.sx.chinamobile.com" 
+http-proxy-option EXT1 "Host: wap.sx.chinamobile.com"
+remote wap.sx.chinamobile.com 80 tcp-client
+http-proxy-option EXT1 xbml 127.0.0.1:440
+http-proxy $IP  8080   
+########免流代码######## ">http-yd-11-13-sx.ovpn
+cat http-yd-11-13-sx.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-山西移动.ovpn
+
+echo "# 小白云免配置 陕西移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote $IP:443 
+http-proxy 10.0.0.172 80
+http-proxy-option EXT1 "Content-Type: application/vnd.wap.mms-message"
+http-proxy-option EXT1 ""
+http-proxy-option EXT1 "POST http://mmsc.monternet.com HTTP/1.1"
+http-proxy-option EXT1 "host:"
+http-proxy-option EXT1 ""
+http-proxy-option VERSION 1.1
+########免流代码######## ">http-yd-11-13-sxyd.ovpn
+cat http-yd-11-13-sxyd.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-陕西移动.ovpn
+
+echo "# 小白云免配置 云南移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy  $IP 8080
+remote wap.ha.chinamobile.com 80 
+########免流代码######## ">http-yd-11-13-ynyd.ovpn
+cat http-yd-11-13-ynyd.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-云南移动.ovpn
+
+echo "# 小白云免配置 浙江移动
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote wap.zj.10086.cn 80 tcp-client
+http-proxy-option EXT1 woiml 127.0.0.1:440
+http-proxy-option EXT1 "X-Online-Host: wap.zj.10086.cn " 
+http-proxy-option EXT1 "Host: wap.zj.10086.cn "
+http-proxy $IP 8080
+########免流代码######## ">http-yd-11-13-zjyd.ovpn
+cat http-yd-11-13-zjyd.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>yd-11-13-浙江移动.ovpn
+
+echo "# 小白云免配置 河南联通
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy 118.212.137.135 31288
+remote $IP 443
+http-proxy-option EXT1 "Content-Type:  application/vnd.wap.mms-message"  
+########免流代码######## ">http-lt-11-13-hn.ovpn
+cat http-lt-11-13-hn.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>lt-11-13-河南联通.ovpn
+
+echo "# 小白云免配置 全国联通-1889
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy 119.39.227.247 1889
+remote $IP 443
+http-proxy-option EXT1 "Host:  api.open.qingting.fm"
+http-proxy-option EXT1 "Connection: keep-alive"
+http-proxy-option EXT1 "Proxy-Authorization:  Basic enhpbjExMmVkMzMyOkdlcmdlQHp4MTMzTSM="
+########免流代码######## ">http-lt-11-13-qglt1889.ovpn
+cat http-lt-11-13-qglt1889.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>lt-11-13-全国联通-1889.ovpn
+
+echo "# 小白云免配置 全国联通box
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote box.10155.com/index.asp&from=http://$IP:440?box.10155.com/index.asp&from=box.10155.com/index.asp&& 440
+http-proxy-option EXT1 “connect box.10155.com“ 
+http-proxy-option EXT1 “: http://box.10155.com/“ 
+http-proxy-option EXT1 “referer:http://box.10155.com/oauth2/new_ ... 000001&real_ip=www.hyf666.top“ 
+http-proxy 10.0.0.172 80
+########免流代码######## ">http-lt-11-13-qgltbox.ovpn
+cat http-lt-11-13-qgltbox.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>lt-11-13-全国联通box.ovpn
+
+echo "# 小白云免配置 全国联通广东
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote m.client.10010.com 3389 tcp-client
+http-proxy-option EXT1 "POST http://m.client.10010.com"
+http-proxy-option EXT1 xbml 127.0.0.1:$vpnport
+http-proxy-option EXT1 "Host: m.client.10010.com / HTTP/1.1"
+http-proxy IP 8080
+########免流代码######## ">http-lt-11-13-qgltgd.ovpn
+cat http-lt-11-13-qgltgd.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>lt-11-13-全国联通广东.ovpn
+
+echo "# 小白云免配置 全国联通沃TV
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote wap.tv.wo.com.cn 80
+http-proxy-option EXT1 CONNECT http://111.206.135.39/UnicomTV/display/main.jsp
+http-proxy-option EXT1 xbml 127.0.0.1:443
+http-proxy-option EXT1 Host: wap.tv.wo.com.cn
+http-proxy-option EXT1 POST /UnicomTV/bin/exec?method=getMob HTTP/1.1
+http-proxy-option EXT1 Referer: http://111.206.135.39/UnicomTV/login/introudce.jsp
+http-proxy-option EXT1 X-Online-Host: wap.tv.wo.com.cn
+http-proxy $IP 8080
+########免流代码######## ">http-lt-11-13-qgltwtv.ovpn
+cat http-lt-11-13-qgltwtv.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>lt-11-13-全国联通沃TV.ovpn
+
+echo "# 小白云免配置 百度爱看电信
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote www.baidu.com/ltewap.tv189.com/ 80 
+http-proxy $IP 8080
+########免流代码######## ">http-dx-11-13-bdak.ovpn
+cat http-dx-11-13-bdak.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>dx-11-13-百度爱看电信.ovpn
+
+echo "# 小白云免配置 咪卡二代线路
+# 本文件由系统自动生成
+# 更新日期：2017-11-11
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+http-proxy-option EXT1 Host: 120.197.5.148:8000/gmcc/Tips
+http-proxy-option EXT1 CONNECT 120.197.5.148:8000/gmcc/Tips
+http-proxy-option EXT1 Get http://120.197.5.148:8000/gmcc/Tips HTTP/1.1
+http-proxy-option EXT1 Connection: keep-alive
+http-proxy-option EXT1 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+http-proxy-option VERSION 1.1
+http-proxy-option EXT1 xbml 127.0.0.1:443
+http-proxy $IP 8080
+########免流代码######## ">http-dx-11-13-mked.ovpn
+cat http-dx-11-13-mked.ovpn http-yd-11-13-xbml2.ovpn http-yd-11-13-xbml3.ovpn>dx-11-13-咪卡二代线路.ovpn
+
+cd /home/
+echo -e "\033[34m进行打包文件...\033[0m"
+zip ${dabao} ./{yd-11-13-安徽WAP.ovpn,yd-11-13-广西移动.ovpn,yd-11-13-贵州移动3389.ovpn,yd-11-13-湖南移动443.ovpn,yd-11-13-北京移动.ovpn,yd-11-13-全国移动.ovpn,yd-11-13-合肥移动.ovpn,yd-11-13-江苏移动.ovpn,yd-11-13-江西移动.ovpn,yd-11-13-山西移动.ovpn,yd-11-13-陕西移动.ovpn,yd-11-13-云南移动.ovpn,yd-11-13-浙江移动.ovpn,lt-11-13-河南联通.ovpn,lt-11-13-全国联通-1889.ovpn,lt-11-13-全国联通box.ovpn,lt-11-13-全国联通广东.ovpn,lt-11-13-全国联通沃TV.ovpn,dx-11-13-百度爱看电信.ovpn,dx-11-13-咪卡二代线路.ovpn} >/dev/null 2>&1
+
+
+
+\cp -rf /home/${dabao}  /home/wwwroot/default/${dabao}
+
+cd /etc/sysconfig/;
+rm -rf i18n 
+echo 'LANG="en_US.UTF-8" SYSFONT="latarcyrheb-sun16"'>/etc/sysconfig/i18n 
+source /etc/sysconfig/i18n
+source /etc/openvpn/peizhi.cfg
+cd /home/
+
+OVPN=$(cat /home/yd-11-13-安徽WAP.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','安徽WAP-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9939,'安徽WAP-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-广西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','广西移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9938,'广西移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-贵州移动3389.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','贵州移动3389-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9937,'贵州移动3389-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-湖南移动443.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','湖南移动443-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9936,'湖南移动443-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-北京移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','北京移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9935,'北京移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-全国移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','全国移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9934,'全国移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-合肥移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','合肥移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9933,'合肥移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-江苏移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江苏移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9932,'江苏移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-江西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','江西移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9931,'江西移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-山西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','山西移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9930,'山西移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-陕西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','陕西移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9929,'陕西移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-云南移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','云南移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9928,'云南移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-11-13-浙江移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('1','浙江移动-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9927,'浙江移动-11-13','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/lt-11-13-河南联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','河南联通-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9926,'河南联通-11-13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-11-13-全国联通-1889.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9925,'全国联通-11-13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-11-13-全国联通box.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通box-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9924,'全国联通box-11-13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-11-13-全国联通广东.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通广东-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9923,'全国联通广东-11-13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-11-13-全国联通沃TV.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('2','全国联通沃TV-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9922,'全国联通沃TV-11-13','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/dx-11-13-百度爱看电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','百度爱看电信-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9921,'百度爱看电信-11-13','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+
+OVPN=$(cat /home/dx-11-13-咪卡二代线路.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xbml_article(category_id,title,content) values('3','咪卡二代线路-11-13','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(9920,'咪卡二代线路-11-13','${OVPN}','TCP线路',4,1,'特殊线路','${ttime}')" >/dev/null 2>&1
+
+
+
+rm -rf *.ovpn
+
+echo
+echo -e "\033[36m正在上传文件中...\033[0m"
+echo -e "\033[36m温馨提示：\033[0m"
+echo -e "\033[36m上传需要几分钟具体时间看你服务器配置\033[0m"
+echo -e "\033[36m再此期间请耐心等待！\033[0m"
+echo -e "\033[36m上传文件完毕...\033[0m"
+sleep 3         
+echo -e "\033[36m
+==================================================================
+免流线路下载链接：http://$IP:${port}/${dabao}
+==================================================================
+\033[0m"
+echo
+unlock   >/dev/null 2>&1
+rm -rf /root/*   >/dev/null 2>&1

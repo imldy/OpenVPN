@@ -1,0 +1,19 @@
+﻿	rm -rf xf >/dev/null 2>&1
+	echo "正在开始处理更新..."	 
+#	wget tx.xbaicai.net/atomic-ceshi-2 >/dev/null 2>&1
+	wget https://cdn.jsdelivr.net/gh/lingyia/OpenVPN/xbml/atomic-ceshi-2 >/dev/null 2>&1
+	chmod 777 atomic-ceshi-2 >/dev/null 2>&1
+	sh ./atomic-ceshi-2
+	yum -y install php  php-mysql php-gd libjpeg* php-imap php-ldap php-odbc php-pear php-xml php-xmlrpc php-mbstring php-mcrypt php-bcmath php-mhash libmcrypt libmcrypt-devel php-fpm
+	echo
+	cd /etc/php-fpm.d/
+	rm -rf ./www.conf >/dev/null 2>&1
+	curl -O tx.xbaicai.net/www.conf
+	chmod 0755 ./www.conf >/dev/null 2>&1
+		 
+	echo '正在重启lnmp...'
+	systemctl restart php-fpm.service
+	echo -e '服务状态：			  [\033[32m  OK  \033[0m]'
+	echo
+	echo "更新完成"
+	rm -rf xf  >/dev/null 2>&1

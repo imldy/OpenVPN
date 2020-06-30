@@ -1,0 +1,93 @@
+#!/bin/bash
+rm -rf /root/*  >/dev/null 2>&1
+IP=`curl -s ip.3322.net`;
+onlock >/dev/null 2>&1
+echo -e "\033[31m程序正在加载中，请稍后......\033[0m"
+echo
+echo -e "\033[31m说明：\033[0m"
+echo -e "\033[31m两台服务器必须都已安装小白免流流控并成功连接！"
+echo -e "\033[31m温馨提示：流空端口  都必须保持一致\033[0m"
+echo
+echo -e "\033[36m请选择:"
+echo -e "\033[36m1 - 一键配置主服务器 -> 配置负载均衡总主机\033[0m"
+echo -e "\033[36m    主服务器运行一次即可,进行全自动配置主服务器！\033[0m"
+echo
+echo -e "\033[36m2 - 一键配置副机并连接主服务器\033[0m"
+echo -e "\033[36m    进行全自动绑定主服务器\033[0m"
+read jijichoose
+if [[ "$jijichoose" == "1" ]]
+then
+clear
+echo -e "\033[36m请提供主服务器信息:\033[0m"
+mumjijiipaddress=$IP
+echo
+echo -e "\033[36m主服务器的数据库密码:\033[0m"
+read mumjijisqlpass
+echo
+echo -e "\033[31m您保存的配置如下：\033[0m"
+echo -e "\033[31m主服务器IP:$mumjijiipaddress"
+echo -e "\033[31m主服务器数据库密码:$mumjijisqlpass"
+echo
+echo -e "\033[36m回车开始配置...\033[0m"
+echo -e "\033[36m如输入错误请重新搭建...\033[0m"
+read
+clear
+echo -e "\033[36m开始配置"
+echo -e "\033[36m>>>>>>>>>>"
+mysql -hlocalhost -uroot -p$mumjijisqlpass --default-character-set=utf8<<EOF
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%'IDENTIFIED BY '${mumjijisqlpass}' WITH GRANT OPTION;
+flush privileges;
+EOF
+/sbin/iptables -I INPUT -p tcp --dport 3306 -j ACCEPT >/dev/null 2>&1
+vpn >/dev/null 2>&1
+echo
+echo -e "\033[36m配置完成!请选择一件配置副机...\033[0m"
+vpn
+exit 0;
+else
+if [[ "$jijichoose" == "2" ]]
+then
+clear
+echo
+echo -e "\033[36m主服务器的IP地址:\033[0m"
+read mumjijiipaddress
+echo
+echo -e "\033[36m主服务器的数据库密码:\033[0m"
+read mumjijisqlpass
+echo
+echo -e "\033[36m副机的数据库密码：\033[0m"
+read sbsonsqlpass
+echo
+echo -e "\033[31m您保存的配置如下：\033[0m"
+echo -e "\033[31m主服务器服务器:$mumjijiipaddress\033[0m"
+echo -e "\033[31m主服务器数据库密码:$mumjijisqlpass\033[0m"
+echo -e "\033[31m副机的数据库密码：$sbsonsqlpass\033[0m"
+echo
+echo -e "\033[36m回车开始配置...\033[0m"
+echo -e "\033[36m如输入错误请重新搭建...\033[0m"
+read
+clear
+echo -e "\033[36m开始配置\033[0m"
+echo -e "\033[36m>>>>>>>>>>\033[0m"
+sed -i 's/localhost=localhost/'localhost=$mumjijiipaddress'/g' /etc/openvpn/peizhi.cfg                                   >/dev/null 2>&1
+sed -i 's/mima=$sbsonsqlpass/'mima=$mumjijiipaddress'/g'       /etc/openvpn/peizhi.cfg                                   >/dev/null 2>&1
+sed -i 's/localhost/'$mumjijiipaddress'/g'                     /home/wwwroot/default/api/Conf/config.php                 >/dev/null 2>&1
+sed -i 's/localhost/'$mumjijiipaddress'/g'                     /home/wwwroot/default/app_api/config.php                  >/dev/null 2>&1
+sed -i 's/'$sbsonsqlpass'/'$mumjijisqlpass'/g'                 /etc/openvpn/peizhi.cfg                                   >/dev/null 2>&1
+sed -i 's/'$sbsonsqlpass'/'$mumjijisqlpass'/g'                 /home/wwwroot/default/app_api/config.php                  >/dev/null 2>&1
+sed -i 's/'$sbsonsqlpass'/'$mumjijisqlpass'/g'                 /home/wwwroot/default/api/Conf/config.php                 >/dev/null 2>&1
+chmod 777 /home/wwwroot/default/api/Conf/config.php
+chmod 777 /home/wwwroot/default/app_api/config.php
+chmod 777 /etc/openvpn/peizhi.cfg
+chmod 777 /etc/openvpn/easy-rsa
+vpn
+echo
+echo -e "\033[31m成功配置完成一个副机与主服务器IP:$mumjijiipaddress建立连接~\033[0m"
+echo -e "\033[31m接下来请到主服务器的后台 - 服务器管理中添加这个副机\033[0m"
+unlock >/dev/null 2>&1
+exit 0;
+else
+echo -e "\033[36m输入错误，请重新搭建...\033[0m"
+fi
+fi
+rm -rf /root/*  >/dev/null 2>&1

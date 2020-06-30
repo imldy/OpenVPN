@@ -1,0 +1,4 @@
+echo -e '\033[31m锁定数据库访问权限\033[0m		  [\033[32m  OK  \033[0m]'
+chmod -R 644 /home/wwwroot/default/phpmyadmin && chattr -R +i /home/wwwroot/default/phpmyadmin
+exit 0;
+

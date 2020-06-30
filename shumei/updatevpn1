@@ -1,0 +1,53 @@
+#!/bin/bash
+#树莓网www.berryphone.club
+systemctl stop httpd.service
+chmod -R a+r /var/www/
+\cp /var/www/html/config.php /var/www/
+\cp /var/www/html/app.apk /var/www/
+\cp /var/www/html/config.php /home/www/
+#wget http://www.berryphone.club/vpn/web.zip
+echo "正在更新系统....."
+
+
+#rm -rf /var/www/html/*
+cd /var/www/
+
+wget -q https://raw.githubusercontent.com/Andyanna/openvpn/master/web.zip
+
+
+unzip -o web.zip 
+
+rm -rf web.zip
+\cp -a /var/www/web/html/* /var/www/html/
+\cp -a -rf /var/www/web/html/. /var/www/html/
+rm -rf /var/www/web
+
+#rm -rf /var/www/html/config.php
+
+\cp /var/www/config.php /var/www/html/
+\cp /var/www/app.apk /var/www/html/
+
+chmod 0777 -R /var/www/html
+
+
+
+echo "安装成功"
+	systemctl start httpd.service
+	
+	cd /bin
+wget -q https://raw.githubusercontent.com/Andyanna/openvpn/master/bin.zip
+if [ ! -f /bin/bin.zip ]; then
+echo "警告！依赖文件下载失败，脚本停止！"
+exit;0
+fi
+
+
+unzip -o bin.zip >/dev/null 2>&1
+
+rm -rf /bin/bin.zip
+
+chmod -R 0777 /bin
+
+	
+
+exit;0

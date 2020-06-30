@@ -1,0 +1,802 @@
+#!/bin/bash
+rm -rf $0
+vpnport=443
+mpport=8080
+IP=`curl -s ip.3322.net`;
+Welcome='
+==================================================================
+                        一键线路生成脚本
+                  Powered by www.yxvpn.net 2017
+                      All Rights Reserved                           
+                                                                         
+                                by 小哥哥流控 2017-05-01
+==================================================================
+';
+echo -e "\033[36m $Welcome \033[0m";
+echo
+echo -e "\033[31m请输入Web流控端口号(默认 1234)  \033[0m"
+echo
+echo -n -e "\033[36m请输入Web流控端口号\033[0m \033[33m【温馨提示:回车默认端口】\033[0m :"
+read port
+if [[ -z $port ]]
+then
+port=1234
+fi
+echo
+echo -e "\033[34m已设置WEB流控端口号为：$port\033[0m"
+echo
+onlock  >/dev/null 2>&1
+cp /etc/openvpn/easy-rsa/keys/ca.crt /home/ca.crt
+cp /etc/openvpn/easy-rsa/ta.key /home/ta.key
+echo -e "\033[31m欢迎使用小哥哥线路更新脚本\033[0m"
+sleep 1
+echo -e "\033[32m开始生成配置\033[0m"
+sleep 3
+cd /home
+echo "# 小哥哥云免配置 山东移动1
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+remote wap.sd.10086.cn 80
+########小哥哥免流########
+http-proxy $IP 137
+http-proxy-option EXT1 POST http://wap.sd.10086.cn 
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy-option EXT1 Host wap.sd.10086.cn 
+http-proxy-option EXT1 Host: wap.sd.10086.cn / HTTP/1.1
+########小哥哥免流######## ">http-yd-05.28-sd1.ovpn
+echo '
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+auth-user-pass
+ns-cert-type server
+redirect-gateway
+keepalive 20 60
+comp-lzo
+verb 3
+mute 20
+route-method exe
+route-delay 2
+'>yd-xggml4.ovpn
+echo "## 证书
+<ca>
+`cat ca.crt`
+</ca>
+key-direction 1
+<tls-auth>
+`cat ta.key`
+</tls-auth>
+">yd-xggml3.ovpn
+cat http-yd-05.28-sd1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东东营聊城1.ovpn
+
+
+echo "# 小哥哥云免配置 广东广州
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+http-proxy-option EXT1 POST http://migumovie.lovev.com/HTTP/1.1
+http-proxy-option EXT1 Host: migumovie.lovev.com
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy $IP 8080 
+remote migumovie.lovev.com 3389 tcp-client ">http-yd-05.28-gddg11.ovpn
+
+cat http-yd-05.28-gddg11.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-广东广州1.ovpn
+
+
+
+echo "# 小哥哥云免配置 广东东莞2
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote $IP:3389 3389
+http-proxy  211.138.250.72 80
+http-proxy-option VERSION 1.1
+http-proxy-option EXT1  
+http-proxy-option EXT1 host: 
+http-proxy-option EXT1  $IP:3389
+http-proxy-option EXT1  host:wap.cmvideo.cn
+http-proxy-option EXT1       
+http-proxy-option EXT1     /CONNECT / HTTP/1.1
+http-proxy-option EXT1 host:wap.cmvideo.cn
+########免流代码######## ">http-yd-05.28-gddg21.ovpn
+cat http-yd-05.28-gddg21.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-广东东莞1.ovpn
+
+
+
+echo "# 小哥哥云免配置 广东深圳
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+;http-proxy-retry
+;http-proxy [proxy server] [proxy port]
+http-proxy-option EXT1  Host:小哥哥免流:443
+http-proxy $IP 80
+http-proxy-option EXT1 Host:$IP
+http-proxy-option EXT1 xggml 127.0.0.1:443
+########免流代码######## ">http-yd-05.28-gdsz1.ovpn
+cat http-yd-05.28-gdsz1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-广东深圳.ovpn
+
+
+echo "# 小哥哥云免配置 广东移动
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+# 广州以免
+client
+dev tun
+proto tcp
+########小哥哥免流########
+http-proxy-option EXT1 xggml 127.0.0.1:443
+remote migumovie.lovev.com  http://222.186.139.157:443/ 443
+http-proxy-option EXT1 X-Forwarded-For: 192.0.0.17,10.0.0.172
+http-proxy-option EXT1 Host: migumovie.lovev.com
+http-proxy-option EXT1 X-Online-Host: migumovie.lovev.com
+http-proxy $IP 8080
+########小哥哥免流######### ">http-yd-05.28-gdzj1.ovpn
+cat http-yd-05.28-gdzj1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-广东移动.ovpn
+
+
+echo "# 小哥哥云免配置 广西南宁
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########小哥哥免流########
+remote $IP 443
+http-proxy 10.0.0.172 80
+http-proxy-option EXT1 "Content-Type: applicationnd.wap.mms-message"
+http-proxy-option EXT1 ""
+http-proxy-option EXT1 "POST http://migumovie.lovev.com HTTP/1.1"
+http-proxy-option EXT1 "host:"
+http-proxy-option EXT1 ""
+http-proxy-option VERSION 1.1
+########小哥哥免流######## ">http-yd-05.28-gd11.ovpn
+cat http-yd-05.28-gd11.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-广西南宁.ovpn
+
+
+echo "# 小哥哥云免配置 广西移动
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+# 南宁测试以免
+client
+dev tun
+proto tcp
+########小哥哥免流########
+remote $IP:3389 443
+http-proxy 10.0.0.172 80
+http-proxy-option EXT1 "Content-Type: application/vnd.wap.mms-message"
+http-proxy-option EXT1 ""
+http-proxy-option EXT1 "POST http://migumovie.lovev.com HTTP/1.1"
+http-proxy-option EXT1 "host:"
+http-proxy-option EXT1 ""аfaбaвqseгdDaдasеDaFDFжзFWQaRийкFdQsAлaмsf sss asнsоsпsрsdсFsтsуfфхssцчшщъxgwfgafыьэюяёАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯЁ""
+http-proxy-option EXT1 ""
+http-proxy-option VERSION 1.1 
+########小哥哥免流######## ">http-yd-05.28-gxyd11.ovpn
+cat http-yd-05.28-gxyd11.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-广西移动.ovpn
+
+
+echo "# 小哥哥云免配置 广西移动2
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+# 南宁测试以免
+client
+dev tun
+proto tcp
+########小哥哥免流########
+remote $IP 443
+http-proxy 10.0.0.172 80
+http-proxy-option EXT1 "Content-Type: application/vnd.wap.mms-message"
+http-proxy-option EXT1 ""
+http-proxy-option EXT1 "POST http://migumovie.lovev.com HTTP/1.1"
+http-proxy-option EXT1 "host:"
+http-proxy-option EXT1 ""
+http-proxy-option VERSION 1.1
+########小哥哥免流######## ">http-yd-05.28-gxyd211.ovpn
+cat http-yd-05.28-gxyd211.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-广西移动2.ovpn
+
+
+echo "# 小哥哥云免配置 湖北移动1
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote $IP:443@211.137.118.50 1194
+http-proxy-option EXT1 Host:211.137.118.50
+http-proxy 211.137.118.50 80
+########免流代码######## ">http-yd-05.28-hn1.ovpn
+cat http-yd-05.28-hn1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-湖北移动1.ovpn
+
+
+echo "# 小哥哥云免配置 山东聊城2
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+remote wap.sd.10086.cn 80
+########免流代码########
+http-proxy $IP 137
+http-proxy-option EXT1 POST http://wap.sd.10086.cn 
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy-option EXT1 Host wap.sd.10086.cn 
+http-proxy-option EXT1 Host: wap.sd.10086.cn / HTTP/1.1
+########免流代码######## ">http-yd-05.28-gzbj1.ovpn
+cat http-yd-05.28-gzbj1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东聊城2.ovpn
+
+
+echo "# 小哥哥云免配置 山东泰安
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+# 内网线路 需要WAP接入点链接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+http-proxy 218.201.200.5 80
+http-proxy-option EXT1 " "Host:$IP:3389
+http-proxy-option EXT1 Host:218.201.200.5 
+########免流代码######## ">http-yd-05.28-gzyd1.ovpn
+cat http-yd-05.28-gzyd1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东泰安.ovpn
+
+
+echo "# 小哥哥云免配置 山东移动新必免线路
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy-option EXT1 POST http://wap.sd.chinamobile.com/HTTP/1.1
+http-proxy-option EXT1 Host: wap.sd.chinamobile.com
+http-proxy-option EXT1 VPN 127.0.0.1:443
+http-proxy $IP 137 
+remote wap.sd.chinamobile.com 80 tcp-client">http-yd-05.28-hlj1.ovpn
+cat http-yd-05.28-hlj1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东移动新必免线路.ovpn
+
+
+
+echo "# 小哥哥云免配置 移动咪卡
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+http-proxy-option EXT1 Host: 120.197.5.148:8000/gmcc/Tips
+http-proxy-option EXT1 CONNECT 120.197.5.148:8000/gmcc/Tips
+http-proxy-option EXT1 Get http://120.197.5.148:8000/gmcc/Tips HTTP/1.1
+http-proxy-option EXT1 Connection: keep-alive
+http-proxy-option EXT1 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+http-proxy-option VERSION 1.1
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy $IP 8080
+########免流代码########  ">http-yd-05.28-hnyz1.ovpn
+cat http-yd-05.28-hnyz1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-移动咪卡.ovpn
+
+
+echo "# 小哥哥云免配置 重庆移动
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy-option EXT1 POST http://migumovie.lovev.com/HTTP/1.1
+http-proxy-option EXT1 Host: migumovie.lovev.com
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy $IP 8080
+remote migumovie.lovev.com 3389 tcp-client
+########免流代码######## ">http-yd-05.28-jssz1.ovpn
+cat http-yd-05.28-jssz1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-重庆移动.ovpn
+
+
+
+echo "# 小哥哥云免配置 山东fk移动
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy-option EXT1 Host: 小哥哥免流
+http-proxy $IP 8080
+http-proxy-option EXT1 xggml 127.0.0.1:443 
+remote 211.136.165.53 80 tcp-client
+########免流代码######## ">http-yd-05.28-hbyz1.ovpn
+cat http-yd-05.28-hbyz1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东fk移动.ovpn
+
+
+echo "# 小哥哥云免配置 山东聊城1
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy-option EXT1 POST http://migumovie.lovev.com/HTTP/1.1
+http-proxy-option EXT1 Host: migumovie.lovev.com
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy $IP 8080 
+remote migumovie.lovev.com 3389 tcp-client 
+########免流代码######## ">http-yd-05.28-sdlc1.ovpn
+cat http-yd-05.28-sdlc1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东聊城1.ovpn
+
+
+echo "# 小哥哥云免配置 山东青岛
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+http-proxy 218.201.200.5 80
+http-proxy-option EXT1 " "Host:$IP:443
+http-proxy-option EXT1 "Host:218.201.200.5"
+########免流代码######## ">http-yd-05.28-sxyd1.ovpn
+cat http-yd-05.28-sxyd1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东青岛1.ovpn
+
+
+echo "# 小哥哥云免配置 全国电信
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy $IP 8080
+remote www.baidu.com/ltevod.tv189.cn/ 443
+########免流代码######## ">http-dx-05.28-scdx1.ovpn
+
+cat http-dx-05.28-scdx1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>dx-05.28-全国电信.ovpn
+
+
+echo "# 小哥哥云免配置 湖北电信
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+http-proxy-option EXT1 xggml 127.0.0.1:443
+remote vod3.nty.tv189.cn 443
+http-proxy-option EXT1 "GET http://vod3.nty.tv189.cn "
+http-proxy-option EXT1 "POST http://vod3.nty.tv189.cn "
+http-proxy-option EXT1 "X-Online-Host: vod3.nty.tv189.cn "
+http-proxy-option EXT1 "Host: vod3.nty.tv189.cn " 
+http-proxy $IP 8080 ">http-dx-05.28-hbdx1.ovpn
+
+cat http-dx-05.28-hbdx1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>dx-05.28-湖北电信.ovpn
+
+echo "# 小哥哥云免配置 山东电信
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+http-proxy-option EXT1 xggml 127.0.0.1:443 
+remote dl.music.189.cn 80
+http-proxy-option EXT1 GET http://dl.music.189.cn:9495/res/V/1388/mp3/33/58/94/1388335894003000.mp3?mb=15380197563&fs=10104163&s=800&n=&id=63696337&M=online&sid=240387514 HTTP/1.1
+http-proxy-option EXT1 Host dl.music.189.cn:9495
+http-proxy-option EXT1 POST http://iting.music.189.cn:9101/iting2/imusic/V2 HTTP/1.1
+http-proxy $IP 8080
+########免流代码######## ">http-dx-05.28-sd1.ovpn
+
+cat http-dx-05.28-sd1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>dx-05.28-山东电信.ovpn
+
+echo "# 小哥哥云免配置 湖北联通
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########小哥哥免流########
+http-proxy 10.0.0.172 80
+remote box.10155.com/index.asp&from=http://$IP:443?box.10155.com/index.asp&from=box.10155.com/index.asp&& 443
+http-proxy-option EXT1 "POST http://box.10155.com"
+http-proxy-option EXT1 "GET http://box.10155.com"
+http-proxy-option EXT1 ": http://box.10155.com/"
+http-proxy-option EXT1 Referer: http://uac.10010.com/oauth2/new_auth?display=wap&page_type=05&app_code=ECS-YH-WAP&redirect_uri=http://box.10155.com/t/loginCallBack.htm&state=http://box.10155.com/t/home.htm&channel_code=113000001&real_ip=$IP 
+########小哥哥免流########">http-lt-05.28-hblt1.ovpn
+
+cat http-lt-05.28-hblt1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>lt-05.28-湖北联通.ovpn
+
+
+
+echo "# 小哥哥云免配置 山东联通
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+remote wap.tv.wo.com.cn 80
+########免流代码########
+http-proxy $IP 8080
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy-option EXT1 POST http://m.client.10010.com 
+http-proxy-option EXT1 Host: http://m.client.10010.com / HTTP/1.1
+########免流代码######## ">http-lt-05.28-cqlt1.ovpn
+
+cat http-lt-05.28-cqlt1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>lt-05.28-山东联通.ovpn
+
+
+
+echo "# 小哥哥云免配置 安徽联通
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+remote wap.tv.wo.com.cn 80
+########免流代码########
+http-proxy $IP 8080
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy-option EXT1 POST http://m.client.10010.com 
+http-proxy-option EXT1 Host: http://m.client.10010.com / HTTP/1.1
+########免流代码######## ">http-lt-05.28-ahlt1.ovpn
+
+cat http-lt-05.28-ahlt1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>lt-05.28-安徽联通.ovpn
+
+
+echo "# 小哥哥云免配置 广东联通
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote aop.gd10010.cn 80 tcp-client
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy-option EXT1 "X-Online-Host: aop.gd10010.cn"
+http-proxy $IP 8080
+########免流代码######## ">http-lt-05.28-gdlt1.ovpn
+
+cat http-lt-05.28-gdlt1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>lt-05.28-广东联通.ovpn
+
+
+echo "# 小哥哥云免配置 河北沧州
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+;http-proxy-retry
+;http-proxy [proxy server] [proxy port]
+http-proxy 10.0.0.172 80
+http-proxy-option EXT1 " "Host:$IP:443
+http-proxy-option EXT1 Host:wap.10086.cn
+########免流代码######## ">http-lt-05.28-hb1.ovpn
+
+cat http-lt-05.28-hb1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-河北沧州.ovpn
+
+
+echo "# 小哥哥云免配置 湖北黄冈
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote $IP:3389@211.137.118.50 1194
+http-proxy-option EXT1 Host:211.137.118.50
+http-proxy 211.137.118.50 80
+########免流代码######## ">http-yd-05.28-hbhg1.ovpn
+
+cat http-yd-05.28-hbhg1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-湖北黄冈.ovpn
+
+
+echo "# 小哥哥云免配置 湖北武汉
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote $IP:443
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy 211.138.250.72 80
+http-proxy-option EXT1 "host:wap.cmvideo.cn"
+########免流代码######## ">http-yd-05.28-hbwh1.ovpn
+cat http-yd-05.28-hbwh1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-湖北武汉.ovpn
+
+
+echo "# 小哥哥云免配置 山东菏泽
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote wap.sd.chinamobile.com 80 tcp-client
+http-proxy-option EXT1 "POST http://wap.sd.chinamobile.com/HTTP/1.1"
+http-proxy-option EXT1 Host: wap.sd.chinamobile.com
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy $IP 137 
+########免流代码######## ">http-yd-05.28-sdhz1.ovpn
+cat http-yd-05.28-sdhz1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东菏泽.ovpn
+
+
+echo "# 小哥哥云免配置 山东潍坊
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+http-proxy 218.201.200.5 80
+http-proxy-option EXT1 " "Host:$IP:3389
+http-proxy-option EXT1 Host:218.201.200.5  
+########免流代码######## ">http-yd-05.28-sd21.ovpn
+cat http-yd-05.28-sd21.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东潍坊.ovpn
+
+echo "# 小哥哥云免配置 山东烟台
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+http-proxy 218.201.200.5 80
+http-proxy-option EXT1 " "Host:$IP:443
+http-proxy-option EXT1 Host:218.201.200.5 
+########免流代码######## ">http-yd-05.28-sdyt21.ovpn
+cat http-yd-05.28-sdyt21.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东烟台.ovpn
+
+echo "# 小哥哥云免配置 山东德州
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote / 80
+http-proxy 218.201.200.5 80
+http-proxy-option EXT1 " "Host:$IP:443
+http-proxy-option EXT1 Host:218.201.200.5 
+########免流代码######## ">http-yd-05.28-sddz21.ovpn
+cat http-yd-05.28-sddz21.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-山东德州.ovpn
+
+
+echo "# 小哥哥云免配置 山东烟台
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+# 需要WAP接入点链接
+client
+dev tun
+proto tcp
+########免流代码########
+remote $IP:443 443
+http-proxy  211.138.250.72  80
+http-proxy-option VERSION 1.1
+http-proxy-option EXT1 " "
+http-proxy-option EXT1 host: 
+http-proxy-option EXT1 " ""$IP:443"
+http-proxy-option EXT1 " "host:wap.cmvideo.cn
+http-proxy-option EXT1 "      "
+http-proxy-option EXT1 "    /CONNECT / HTTP/1.1"
+http-proxy-option EXT1 "host:wap.cmvideo.cn"
+http-proxy-option EXT1 "xggml 127.0.0.1:443"
+########免流代码######## ">http-yd-05.28-anhf21.ovpn
+cat http-yd-05.28-anhf21.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-安徽铜陵合肥.ovpn
+
+echo "# 小哥哥云免配置 浙江台州
+# 本文件由系统自动生成
+# 更新日期：2017-05-28
+# 类型：HTTP转接
+client
+dev tun
+proto tcp
+########免流代码########
+remote wap.zj.10086.cn 80
+########免流代码########
+http-proxy-option EXT1 xggml 127.0.0.1:443
+http-proxy $IP 8080
+http-proxy-option EXT1 "X-Online-Host: wap.zj.10086.cn " 
+http-proxy-option EXT1 "Host: wap.zj.10086.cn "
+########免流代码######## ">http-yd-05.28-zjtz1.ovpn
+cat http-yd-05.28-zjtz1.ovpn yd-xggml4.ovpn yd-xggml3.ovpn>yd-05.28-浙江台州.ovpn
+
+
+
+cd /home/
+echo -e "\033[34m进行打包文件...\033[0m"
+zip xggml-05.28-openvpn.zip ./{yd-05.28-山东东营聊城1.ovpn,yd-05.28-浙江台州.ovpn,yd-05.28-安徽铜陵合肥.ovpn,yd-05.28-山东德州.ovpn,yd-05.28-山东烟台.ovpn,yd-05.28-山东潍坊.ovpn,yd-05.28-山东菏泽.ovpn,yd-05.28-湖北武汉.ovpn,yd-05.28-湖北黄冈.ovpn,yd-05.28-河北沧州.ovpn,yd-05.28-广东广州1.ovpn,yd-05.28-广东东莞1.ovpn,yd-05.28-广东深圳.ovpn,yd-05.28-广东移动.ovpn,yd-05.28-广西移动2.ovpn,yd-05.28-广西移动.ovpn,yd-05.28-广西南宁.ovpn,yd-05.28-湖北移动1.ovpn,yd-05.28-山东聊城2.ovpn,yd-05.28-山东泰安.ovpn,yd-05.28-山东移动新必免线路.ovpn,yd-05.28-移动咪卡.ovpn,yd-05.28-重庆移动.ovpn,yd-05.28-山东fk移动.ovpn,yd-05.28-山东聊城1.ovpn,yd-05.28-山东青岛1.ovpn,dx-05.28-湖北电信.ovpn,dx-05.28-全国电信.ovpn,dx-05.28-山东电信.ovpn,lt-05.28-湖北联通.ovpn,lt-05.28-广东联通.ovpn,lt-05.28-安徽联通.ovpn,lt-05.28-山东联通.ovpn}
+
+echo
+
+
+\cp -rf /home/xggml-05.28-openvpn.zip  /home/wwwroot/default/xggml-05.28-openvpn.zip
+
+cd /etc/sysconfig/;
+rm -rf i18n 
+echo 'LANG="en_US.UTF-8" SYSFONT="latarcyrheb-sun16"'>/etc/sysconfig/i18n 
+source /etc/sysconfig/i18n
+source /etc/openvpn/peizhi.cfg
+cd /home/
+
+OVPN=$(cat /home/yd-05.28-山东东营聊城1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东东营聊城1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(570,'山东东营聊城1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广东广州1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','广东广州1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(571,'广东广州1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广东东莞1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','广东东莞1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(572,'广东东莞1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广东深圳.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','广东深圳-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(573,'广东深圳-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广东移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','广东移动-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(574,'广东移动-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广西南宁.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','广西南宁-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(575,'广西南宁-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-湖北移动1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','湖北移动1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(576,'湖北移动1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东泰安.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东泰安-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(577,'山东泰安-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东移动新必免线路.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东必免线路-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(578,'山东必免线路-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-移动咪卡.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','移动咪卡-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(579,'移动咪卡-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-重庆移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','重庆移动-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(580,'重庆移动-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东fk移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东fk移动-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(581,'山东fk移动-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东聊城1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东聊城1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(582,'山东聊城1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东聊城2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东聊城2-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(601,'山东聊城2-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/yd-05.28-山东青岛1.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东青岛1-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(583,'山东青岛1-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-05.28-湖北联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('2','湖北联通-05.28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(584,'湖北联通-05.28','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.28-山东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('2','山东联通-05.28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(585,'山东联通-05.28','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/dx-05.28-全国电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('3','全国电信-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(586,'全国电信-05-28','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/dx-05.28-山东电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('3','山东电信-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(587,'山东电信-05-28','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+
+
+OVPN=$(cat /home/dx-05.28-湖北电信.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('3','湖北电信-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(588,'湖北电信-05-28','${OVPN}','TCP线路',2,1,'电信','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/lt-05.28-安徽联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('2','安徽联通-05.28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(589,'安徽联通-05.28','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/lt-05.28-广东联通.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('2','广东联通-05.28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(602,'广东联通-05.28','${OVPN}','TCP线路',3,1,'联通','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/yd-05.28-广西移动.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','广西移动-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(590,'广西移动-05-28','${OVPN}','TCP线路',1,1,'南宁已免','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-广西移动2.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','广西移动2-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(600,'广西移动2-05-28','${OVPN}','TCP线路',1,1,'南宁已免','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/yd-05.28-河北沧州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','河北沧州-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(591,'河北沧州-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-湖北黄冈.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','湖北黄冈-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(592,'湖北黄冈-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-湖北武汉.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','湖北武汉-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(593,'湖北武汉-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东菏泽.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东菏泽-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(594,'山东菏泽-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东潍坊.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东潍坊-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(595,'山东潍坊-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东烟台.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东烟台-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(596,'山东烟台-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-山东德州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','山东德州-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(599,'山东德州-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+OVPN=$(cat /home/yd-05.28-安徽铜陵合肥.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','安徽铜陵合肥-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(597,'安徽铜陵合肥-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+OVPN=$(cat /home/yd-05.28-浙江台州.ovpn)
+mysql -hlocalhost -uroot -p$mima -e "use ov;insert into xggml_article(category_id,title,content) values('1','浙江台州-05-28','${OVPN}')" >/dev/null 2>&1
+mysql -hlocalhost -uroot -p$mima -e "use ov;INSERT INTO line values(598,'浙江台州-05-28','${OVPN}','TCP线路',1,1,'移动','${ttime}')" >/dev/null 2>&1
+
+
+
+
+
+rm -rf *.ovpn
+
+echo
+echo -e "\033[36m正在上传文件中...\033[0m"
+echo -e "\033[36m温馨提示：\033[0m"
+echo -e "\033[36m上传需要几分钟具体时间看你服务器配置\033[0m"
+echo -e "\033[36m再此期间请耐心等待！\033[0m"
+echo -e "\033[36m上传文件完毕...\033[0m"
+sleep 3
+echo -e "\033[36m
+==================================================================
+免流线路下载链接：http://${IP}:${port}/xggml-05.28-openvpn.zip
+==================================================================
+\033[0m"
+echo
+vpn
+unlock   >/dev/null 2>&1
+rm -- "$0"   >/dev/null 2>&1

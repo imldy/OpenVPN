@@ -1,0 +1,57 @@
+#!/bin/sh
+###########################  
+PATH=/usr/local/bin:/sbin:/usr/bin:/bin  
+
+case "$1" in  
+    start)  
+killall -9 openvpn >/dev/null 2>&1
+killall -9 sh >/dev/null 2>&1
+killall -9 sleep >/dev/null 2>&1
+killall -9 monitore.sh >/dev/null 2>&1
+killall -9 monitoreudp.sh >/dev/null 2>&1
+killall -9 monitoreudp2.sh >/dev/null 2>&1
+rm -rf /var/www/html/resources/jklog.txt
+rm -rf /home/jiankong.log
+rm -rf /home/speed.log
+systemctl stop openvpn@server.service
+systemctl start openvpn@server.service
+killall -9 mproxy-html >/dev/null 2>&1
+cd /root/
+./mproxy-html -l 8899 -d >/dev/null 2>&1
+./mproxy-html -l 137 -d >/dev/null 2>&1
+openvpn --config /etc/openvpn/serverudp.conf &
+openvpn --config /etc/openvpn/serverudp2.conf &
+/var/www/html/resources/speed.sh >>/home/speed.log 2>&1 &
+/var/www/html/resources/monitore.sh >>/home/jiankong.log 2>&1 &
+/var/www/html/resources/monitoreudp.sh >>/home/jiankong.log 2>&1 &
+/var/www/html/resources/monitoreudp2.sh >>/home/jiankong.log 2>&1 &
+lamp
+echo -e '服务状态：			  [\033[32m  OK  \033[0m]'
+exit 0;  
+        ;;  
+    stop)  
+killall -9 openvpn >/dev/null 2>&1
+killall -9 sh >/dev/null 2>&1
+killall -9 sleep >/dev/null 2>&1
+killall -9 monitore.sh >/dev/null 2>&1
+killall -9 monitoreudp.sh >/dev/null 2>&1
+killall -9 monitoreudp2.sh >/dev/null 2>&1
+rm -rf /var/www/html/resources/jklog.txt
+rm -rf /home/jiankong.log
+systemctl stop openvpn@server.service
+killall -9 mproxy-html  
+systemctl stop mariadb  
+systemctl stop httpd.service 
+systemctl stop php-fpm.service
+echo -e '服务状态：			  [\033[32m  OK  \033[0m]'
+exit 0;  
+        ;;  
+   restart|force-reload)  
+        ${0} stop  
+        ${0} start  
+        ;;  
+  *)  
+     
+        exit 1  
+esac  
+##############################  
